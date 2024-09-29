@@ -1,0 +1,6 @@
+@AirHealthV5.Server_HostAddress = http://localhost:5236
+
+GET {{AirHealthV5.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

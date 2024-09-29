@@ -1,0 +1,30 @@
+<!-- sensor-data.component.html -->
+<div>
+  <h2>Sensor Readings</h2>
+
+  <!-- Date input fields -->
+  <label for="from">From:</label>
+  <input type="datetime-local" id="from" [(ngModel)]="fromDate"/>
+
+  <label for="to">To:</label>
+  <input type="datetime-local" id="to" [(ngModel)]="toDate"/>
+
+  <button (click)="fetchSensorData()">Fetch</button>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Value</th>
+      <th>Timestamp</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let reading of sensorReadings">
+      <td>{{ reading.id }}</td>
+      <td>{{ reading.value }}</td>
+      <td>{{ reading.timestamp | date: 'short' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
