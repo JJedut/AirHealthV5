@@ -1,0 +1,51 @@
+.lab-put {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+
+  label {
+    margin-bottom: 0.25rem;
+    font-size: 22px;
+  }
+
+  input {
+    background: transparent;
+    border: 2px solid var(--black-2);
+    border-radius: 0.25rem;
+    padding: 5px 10px;
+    color: var(--text-color-white);
+    font-family: "Space Mono", monospace;
+    font-size: 22px;
+
+    &:focus {
+      outline: none;
+      border: 2px solid var(--text-color-white);
+    }
+    &:hover {
+      outline: 2px solid var(--text-color-white);
+    }
+  }
+}
+.user-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.user-form {
+  width: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.btns {
+  display: flex;
+  justify-content: end;
+
+  ::ng-deep app-button {
+    button {
+      width: auto !important;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<div cdkDropList cdkDropListOrientation="mixed" class="last-reading" (cdkDropListDropped)="drop($event)">
+  @for (reading of sensorReadings; track reading) {
+    <div *ngIf="reading.value != null" class="box" cdkDrag>
+      <h3>{{ reading.label }}</h3>
+      <h1>{{ reading.value }}</h1>
+    </div>
+  }
+</div>

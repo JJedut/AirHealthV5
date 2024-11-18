@@ -1,0 +1,14 @@
+<div class="settings-container">
+  <div class="left">
+    <div class="action">
+      <app-button [style]="'filled'" (click)="loadComponent(UserSettingsComponent)">User</app-button>
+      <app-button [style]="'filled'" (click)="loadComponent(DeviceApiKeysComponent)">API Keys</app-button>
+    </div>
+    <div>
+      <app-button [style]="'filled'" [disabled]="isAdmin" (click)="deleteAccount()">Delete Account</app-button>
+    </div>
+  </div>
+  <div class="right container-border">
+    <ng-container *ngComponentOutlet="currentComponent"></ng-container>
+  </div>
+</div>

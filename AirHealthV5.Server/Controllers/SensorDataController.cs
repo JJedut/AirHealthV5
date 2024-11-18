@@ -1,7 +1,5 @@
-﻿using AirHealthV5.Server.Command.SensorDataCommand;
-using AirHealthV5.Server.DbContext;
-using AirHealthV5.Server.Models;
-using AirHealthV5.Server.Query.SensorDataQuery;
+﻿using AirHealthV5.Server.Application.Queries.SensorDataQueries;
+using AirHealthV5.Server.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +9,10 @@ namespace AirHealthV5.Server.Controllers;
 [ApiController]
 public class SensorDataController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
     private readonly IMediator _mediator;
 
-    public SensorDataController(ApplicationDbContext context, IMediator mediator)
+    public SensorDataController(IMediator mediator)
     {
-        _context = context;
         _mediator = mediator;
     }
 
@@ -28,7 +24,14 @@ public class SensorDataController : ControllerBase
     }
     
     [HttpGet("GetSensorData")]
-    public async Task<ActionResult<IEnumerable<SensorReadingModel>>> GetSensorData([FromQuery] SensorDataQuery query)
+    public async Task<ActionResult<IEnumerable<DeviceReadingModel>>> GetSensorData([FromQuery] SensorDataQuery query)
+    {
+        var response = await _mediator.Send(query);
+        return Ok(response);
+    }
+    
+    [HttpGet("GetLatestSensorReading")]
+    public async Task<ActionResult<DeviceReadingModel>> GetLatestSensorReading([FromQuery] GetLatestReadingQuery query)
     {
         var response = await _mediator.Send(query);
         return Ok(response);

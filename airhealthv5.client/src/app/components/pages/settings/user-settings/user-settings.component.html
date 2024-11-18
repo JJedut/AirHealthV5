@@ -1,0 +1,17 @@
+<div class="user-container">
+  <h1>User Settings</h1>
+  <form [formGroup]="userEditForm" (ngSubmit)="onSubmit()" class="user-form">
+    <div class="lab-put">
+      <label for="username">Change Username</label>
+      <input id="username" formControlName="username" type="text" />
+    </div>
+    <div class="btns">
+      <app-button
+        [style]="'filled'"
+        [type]="'submit'"
+        [disabled]="userEditForm.invalid">
+        Save
+      </app-button>
+    </div>
+  </form>
+</div>

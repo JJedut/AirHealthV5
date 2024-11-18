@@ -1,0 +1,76 @@
+button {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.small-button {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.medium-button {
+  font-size: 18px;
+  padding: 8px 16px;
+}
+
+.large-button {
+  font-size: 22px;
+  padding: 12px 24px;
+}
+
+.filled-button {
+  background-color: var(--black-1);
+  color: var(--text-color-white);
+  border: 2px solid var(--black-1);
+}
+
+.filled-button:hover:not(:disabled) {
+  background-color: var(--black-2);
+  border-color: var(--black-2);
+}
+
+.outline-button {
+  background-color: transparent;
+  color: var(--black-1);
+  border: 2px solid var(--black-1);
+}
+
+.outline-button:hover:not(:disabled) {
+  background-color: var(--black-2);
+  color: var(--text-color-white);
+  border: 2px solid var(--black-2);
+}
+
+.accent-button {
+  background-color: var(--green);
+  color: var(--black-1);
+  border: 2px solid var(--green);
+}
+
+.accent-button:hover:not(:disabled) {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+.outline-accent-button {
+  background-color: transparent;
+  color: var(--green);
+  border: 2px solid var(--green);
+}
+
+.outline-accent-button:hover:not(:disabled) {
+  background-color: var(--green);
+  color: var(--black-1);
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}

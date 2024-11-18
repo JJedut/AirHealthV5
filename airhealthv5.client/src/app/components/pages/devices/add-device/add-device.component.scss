@@ -1,0 +1,62 @@
+.add-device-container {
+  width: 60vh;
+
+  .lab-put {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+
+    label {
+      margin-bottom: 0.25rem;
+      font-size: 22px;
+    }
+
+    input {
+      background: transparent;
+      border: 2px solid var(--black-2);
+      border-radius: 0.25rem;
+      padding: 5px 10px;
+      color: var(--text-color-white);
+      font-family: "Space Mono", monospace;
+      font-size: 22px;
+
+      &:focus {
+        outline: none;
+        border: 2px solid var(--text-color-white);
+      }
+      &:hover {
+        outline: 2px solid var(--text-color-white);
+      }
+    }
+  }
+
+  .btns {
+    display: flex;
+    justify-content: end;
+    margin-top: 1.5rem;
+
+    ::ng-deep app-button {
+      button {
+        width: auto !important;
+      }
+    }
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    //margin-bottom: 1.5rem;
+  }
+
+  .code {
+    border: 2px solid var(--black-2);
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 0.5rem;
+    padding: 0 1rem;
+    font-size: 16px;
+
+    .pink { color: #ef476f; }
+    .green { color: #06d6a0; }
+    .blue { color: #4cc9f0; }
+  }
+}
+

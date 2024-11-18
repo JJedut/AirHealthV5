@@ -1,0 +1,116 @@
+.key-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.table-container {
+  width: 100%;
+
+  .table-border {
+    border: solid 2px var(--black-2);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+      background: var(--black-1);
+      padding: 0.5rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 1px solid var(--black-2);
+    }
+
+    td {
+      padding: 0.5rem 1rem;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid var(--black-2);
+    }
+    td:not(:last-child), th:not(:last-child) {
+      border-right: 1px solid var(--black-2);
+    }
+  }
+}
+
+.add-key {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: var(--text-color-white);
+    border: 2px solid var(--black-2);
+    font-size: 14px;
+    padding: 6px 12px;
+    outline: none;
+    width: 100%;
+  }
+
+  ::ng-deep app-button {
+    button {
+      border-radius: 0 0.5rem 0.5rem 0;
+      white-space: nowrap;
+    }
+  }
+}
+
+.delete:hover {
+  cursor: pointer;
+  color: var(--red);
+  background: var(--black-1);
+}
+
+.censored-key {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+}
+
+.censored-key::after {
+  content: attr(title); /* Display the full key */
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  background-color: #fff;
+  color: #333;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10;
+}
+
+.censored-key:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+

@@ -1,1 +1,177 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the theme object.
+$airhealthv5-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+:root {
+  @include mat.all-component-themes($airhealthv5-theme);
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($airhealthv5.client-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+// @include mat.color-variants-backwards-compatibility($airhealthv5.client-theme);
 /* You can add global styles to this file, and also import other style files */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --text-color: #131515;
+  --text-color-white: #dcdcdc;
+
+  --red: #EE6055;
+  --yellow: #FFD97D;
+  --green: #60D394;
+
+  --black: #131515;
+  --black-1: #232626;
+  --black-2: #373D3D;
+}
+
+.green-theme {
+  --primary-bg-color: #4CAF50;   /* Green */
+}
+
+/* Yellow Theme (Moderate air quality) */
+.yellow-theme {
+  --primary-bg-color: #FFEB3B;   /* Yellow */
+}
+
+/* Orange Theme (Unhealthy for sensitive groups) */
+.orange-theme {
+  --primary-bg-color: #FF9800;   /* Orange */
+}
+
+/* Red Theme (Unhealthy air quality) */
+.red-theme {
+  --primary-bg-color: #F44336;   /* Red */
+}
+
+.app-root {
+  max-width: 60%;
+  margin: 0 auto; /* Center the content horizontally */
+  //padding: 0 20px; /* Add padding on sides for responsiveness */
+}
+
+body {
+  width: 100%;
+  //max-width: 60%;
+  margin: 0 auto;
+  padding: 0;
+  background: var(--black);
+  color: var(--text-color-white);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.1;
+  z-index: 10;
+  background-image: url(assets/grain.svg);
+  background-size: cover;
+}
+
+
+
+html, body { height: 100%; }
+body { font-family: "Space Mono", monospace; }
+
+.blur {
+  background: rgba(var(--black-1), 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.grain {
+  //opacity: 90%;
+  background-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3C!-- svg: first layer --%3E%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+app-dash-board, app-settings {
+  width: 100% !important;
+}
+
+.card {
+  border-radius: 0.8rem;
+  padding: 1rem;
+  border: solid 1px var(--black-2);
+}
+
+.container {
+  background-color: var(--black-1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.container-center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.line {
+  height: auto;
+  border-right: 1px solid var(--black-2);
+}
+
+.line-vertical {
+  width: auto;
+  border-bottom: 1px solid var(--black-2);
+}
+
+.min-width {
+  width: min-content;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.w-10 {
+  width: 0 !important;
+}
+
+.ws-nowrap {
+  white-space: nowrap !important;
+}

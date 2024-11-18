@@ -1,0 +1,49 @@
+<div class="key-container">
+  <div>
+    <div *ngIf="apiKeys.length > 0; else noKeys" class="table-container">
+      <h1>Your API Keys:</h1>
+      <div class="table-border">
+        <table>
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Key</th>
+            <th>Created Date</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let key of apiKeys">
+            <td>{{ key.keyName }}</td>
+            <td>{{ key.key }}</td>
+            <td>{{ key.createdOn | date: 'dd.MM.yyyy HH:mm' : 'local' }}</td>
+            <td (click)="deleteApiKey(key.keyId)" class="centered delete">
+            <span class="material-symbols-outlined">
+              delete
+            </span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <ng-template #noKeys>
+      <p>No API keys found.</p>
+    </ng-template>
+  </div>
+
+  <div class="add-key">
+    <form [formGroup]="apiKeyForm" (ngSubmit)="generateNewApiKey()">
+      <input formControlName="apiKeyName" placeholder="Enter API Key Name" />
+      <app-button
+        [type]="'submit'"
+        [size]="'small'"
+        [style]="'accent'"
+        [disabled]="apiKeyForm.invalid"
+      >
+        Generate Key
+      </app-button>
+    </form>
+  </div>
+</div>

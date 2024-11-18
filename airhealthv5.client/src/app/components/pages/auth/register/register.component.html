@@ -1,0 +1,32 @@
+<div class="container-center">
+  <div class="container-register">
+    <h1>Register</h1>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="lab-put">
+        <label for="username">Username</label>
+        <input id="username" formControlName="username" type="text" />
+      </div>
+      <div class="lab-put">
+        <label for="password">Password</label>
+        <input id="password" formControlName="password" type="password" />
+      </div>
+      <div class="btns">
+        <app-button
+          [style]="'outline-accent'"
+          (click)="moveToLogin()">
+          Login
+        </app-button>
+        <app-button
+          [style]="'accent'"
+          [type]="'submit'"
+          [disabled]="registerForm.invalid">
+          Register
+        </app-button>
+      </div>
+    </form>
+
+    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
+
+</div>

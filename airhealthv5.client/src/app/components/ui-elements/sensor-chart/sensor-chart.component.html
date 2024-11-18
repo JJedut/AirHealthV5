@@ -1,30 +1,86 @@
-<!-- sensor-data.component.html -->
-<div>
-  <h2>Sensor Readings</h2>
+<div class="sensor-chart">
+  <div class="time-range">
+    <input type="datetime-local" [(ngModel)]="fromDate"/>
+    <input type="datetime-local" [(ngModel)]="toDate"/>
+    <app-button [style]="'filled'" (click)="fetchSensorData()">Fetch</app-button>
+    <app-button [style]="'filled'" (click)="tableGraphToggle()">{{ isTableView ? 'Graph' : 'Table' }}</app-button>
+  </div>
+  <div *ngIf="temperatureReadings.length > 0 || sensorReadings.length > 0">
+    <div *ngIf="!isTableView">
+      <h2 class="title">{{ 'Temperature' }}</h2>
+      <tui-axes
+        class="axes"
+        [axisXLabels]="axisYLabels"
+        [horizontalLines]="4"
+        [verticalLines]="6">
+        <tui-line-chart
+          class="chart"
+          [dots]="false"
+          [height]="30"
+          [value]="temperatureReadings"
+          [width]="width"
+          [x]="0"
+          [xStringify]="stringify"
+          [y]="10"
+          [yStringify]="stringify"
+        />
+      </tui-axes>
 
-  <!-- Date input fields -->
-  <label for="from">From:</label>
-  <input type="datetime-local" id="from" [(ngModel)]="fromDate"/>
+      <h2 class="title">{{ 'Humidity' }}</h2>
+      <tui-axes
+        class="axes"
+        [axisXLabels]="axisYLabels"
+        [horizontalLines]="4"
+        [verticalLines]="6">
+        <tui-line-chart
+          class="chart"
+          [dots]="false"
+          [height]="100"
+          [value]="humidityReadings"
+          [width]="width"
+          [x]="0"
+          [xStringify]="stringify"
+          [y]="0"
+          [yStringify]="stringify"
+        />
+      </tui-axes>
+    </div>
 
-  <label for="to">To:</label>
-  <input type="datetime-local" id="to" [(ngModel)]="toDate"/>
-
-  <button (click)="fetchSensorData()">Fetch</button>
-
-  <table>
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Value</th>
-      <th>Timestamp</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let reading of sensorReadings">
-      <td>{{ reading.id }}</td>
-      <td>{{ reading.value }}</td>
-      <td>{{ reading.timestamp | date: 'short' }}</td>
-    </tr>
-    </tbody>
-  </table>
+    <!--TABLE-->
+    <div *ngIf="isTableView" class="sensor-table">
+      <table>
+        <thead>
+        <tr>
+          <th class="w-10">Nr</th>
+          <th *ngIf="hasTemperature">Temp. (°C)</th>
+          <th *ngIf="hasHumidity">Humidity (%)</th>
+          <th *ngIf="hasPressure">Pressure (hPa)</th>
+          <th *ngIf="hasMqTwo">MQ2 (ppm)</th>
+          <th *ngIf="hasPm1">PM 1 (µg/m³)</th>
+          <th *ngIf="hasPm25">PM 2.5 (µg/m³)</th>
+          <th *ngIf="hasPm10">PM 10 (µg/m³)</th>
+          <th *ngIf="hasGasResistance">Gas Res. (ohms)</th>
+          <th class="w-10 ws-nowrap">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of sensorReadings; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td *ngIf="hasTemperature">{{ data.temperature }}</td>
+          <td *ngIf="hasHumidity">{{ data.humidity }}</td>
+          <td *ngIf="hasPressure">{{ data.pressure }}</td>
+          <td *ngIf="hasMqTwo">{{ data.mqTwo }}</td>
+          <td *ngIf="hasPm1">{{ data.pm1 }}</td>
+          <td *ngIf="hasPm25">{{ data.pm25 }}</td>
+          <td *ngIf="hasPm10">{{ data.pm10 }}</td>
+          <td *ngIf="hasGasResistance">{{ data.gasResistance }}</td>
+          <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm' }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="sensorReadings.length == 0" class="no-data">
+    <h1>{{ 'noDataFound' }}</h1>
+  </div>
 </div>

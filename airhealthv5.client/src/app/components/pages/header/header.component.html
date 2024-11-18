@@ -1,0 +1,33 @@
+<header *ngIf="isUserLoggedIn" class="header">
+  <div class="empty-space"></div>
+  <div class="devices">
+    <div class="device-list">
+      <app-button
+        (click)="navigateToAddDevice()"
+        [style]="'filled'" [size]="'medium'">
+         <span class="add">+</span> Device
+      </app-button>
+      <div *ngIf="devices.length > 0" class="line"></div>
+      <ng-container *ngFor="let device of devices">
+        <app-button
+          (click)="navigateToDevice(device.deviceId)"
+          [style]="device.deviceId === activeDeviceId ? 'outline' : 'filled'"
+          [size]="'medium'">
+          {{ device.deviceName }}
+        </app-button>
+      </ng-container>
+    </div>
+  </div>
+  <div class="profile" (click)="toggleDropdown()">
+    <div class="avatar centered">{{ firstLatter }}</div>
+
+    <div class="dropdown-menu" *ngIf="isDropdownOpen">
+      <h2 class="user-name">{{ userName }}</h2>
+      <app-button [style]="'filled'" [size]="'small'" (click)="navigateToDeviceList()">Device List</app-button>
+      <app-button [style]="'filled'" [size]="'small'" (click)="navigateToSettings()">Settings</app-button>
+      <div class="line-vertical"></div>
+      <app-button [style]="'filled'" [size]="'small'" (click)="logout()">Logout</app-button>
+    </div>
+  </div>
+</header>
+

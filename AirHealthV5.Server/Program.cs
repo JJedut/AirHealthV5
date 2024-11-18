@@ -1,17 +1,26 @@
+using System.Text;
 using AirHealthV5.Server.DbContext;
+using AirHealthV5.Server.Entities;
+using AirHealthV5.Server.Infrastructure.Repositories;
+using AirHealthV5.Server.Infrastructure.Services;
+using AirHealthV5.Server.Interfaces.Repository;
+using AirHealthV5.Server.Middleware;
 using Microsoft.EntityFrameworkCore;
-using AirHealthV5.Server.Repository.SensorRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
+var services = builder.Services;
 
 // Add services to the container.
-builder.Services.AddCors(options =>
+services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
         policy.WithOrigins(
                 "http://localhost:4200", 
-                "https://192.168.33.101:7096", 
+                "https://192.168.33.109:7096", 
                 "https://127.0.0.1:4200"
                 )
             .AllowAnyHeader()
@@ -20,25 +29,53 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddControllers();
+services.AddControllers();
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config["JwtSettings:Issuer"],
+            ValidAudience = config["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!))
+        };
+    });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+services.AddAuthorization();
+services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
 
-builder.Services.AddTransient<SensorRepository>();
+services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
+services.AddTransient<IDeviceReadingRepository, DeviceReadingRepository>();
+services.AddTransient<IDeviceRepository, DevicesRepository>();
+services.AddTransient<IAuthRepository, AuthRepository>();
+services.AddTransient<IUserRepository, UserRepository>();
+
+services.AddSingleton<JwtTokenService>();
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+services.AddScoped<ApiKeyService>();
+
+services.AddTransient<AdminSeeder>();
+//services.AddTransient<ApiKeyMiddleware>();
 
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigins");
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+//app.UseMiddleware<ApiKeyMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -49,10 +86,19 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProvider = scope.ServiceProvider;
+    var adminSeeder = serviceProvider.GetRequiredService<AdminSeeder>();
+    await adminSeeder.SeedAdminUserAsync();
+}
 
 app.Run();

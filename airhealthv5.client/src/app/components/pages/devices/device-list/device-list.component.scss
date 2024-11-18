@@ -1,0 +1,84 @@
+.key-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.table-container {
+  width: 100%;
+
+  .table-border {
+    border: solid 2px var(--black-2);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+      background: var(--black-1);
+      padding: 0.5rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 1px solid var(--black-2);
+    }
+
+    td {
+      padding: 0.5rem 1rem;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid var(--black-2);
+    }
+    td:not(:last-child), th:not(:last-child) {
+      border-right: 1px solid var(--black-2);
+    }
+  }
+}
+
+.add-key {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  input {
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    border-radius: 0.5rem 0 0 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: var(--text-color-white);
+    border: 2px solid var(--black-2);
+    font-size: 14px;
+    padding: 6px 12px;
+    outline: none;
+    width: 100%;
+  }
+
+  ::ng-deep app-button {
+    button {
+      border-radius: 0 0.5rem 0.5rem 0;
+      white-space: nowrap;
+    }
+  }
+}
+
+.delete:hover {
+  cursor: pointer;
+  color: var(--red);
+  background: var(--black-1);
+}

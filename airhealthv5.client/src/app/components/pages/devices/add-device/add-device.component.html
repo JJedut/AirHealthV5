@@ -1,0 +1,48 @@
+<div class="add-device-container">
+  <h1>Add Device</h1>
+  <a href="https://www.git.example.com" target="_blank" rel="noopener noreferrer">
+    View Example Microcontroller Code on GitHub
+  </a>
+  <div>
+    <h2>Example JSON Payload</h2>
+  <pre class="code">
+    <code>
+&#123;
+  <span class="pink">"DeviceId"</span>: <span class="green">"deviceId"</span>,
+  <span class="pink">"MqTwo"</span>: <span class="blue">number</span>,
+  <span class="pink">"Temperature"</span>: <span class="blue">number</span>,
+  <span class="pink">"Humidity"</span>: <span class="blue">number</span>,
+  <span class="pink">"Pressure"</span>: <span class="blue">number</span>,
+  <span class="pink">"GasResistance"</span>: <span class="blue">number</span>,
+  <span class="pink">"Pm1"</span>: <span class="blue">number</span>,
+  <span class="pink">"Pm25"</span>: <span class="blue">number</span>,
+  <span class="pink">"Pm10"</span>: <span class="blue">number</span>
+&#125;</code>
+  </pre>
+  </div>
+  <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()">
+    <div class="lab-put">
+      <label for="deviceName">Device Name:</label>
+      <input id="deviceName" formControlName="deviceName" type="text" />
+      <div *ngIf="deviceForm.get('deviceName')?.invalid && deviceForm.get('deviceName')?.touched">
+        <small *ngIf="deviceForm.get('deviceName')?.errors?.['required']">Device Name is required.</small>
+        <small *ngIf="deviceForm.get('deviceName')?.errors?.['minlength']">Device Name must be at least 3 characters.</small>
+      </div>
+    </div>
+
+    <div class="lab-put">
+      <label for="apiKey">API Key<small>(Settings > API Keys)</small>:</label>
+      <input id="apiKey" formControlName="apiKey" type="text" />
+      <div *ngIf="deviceForm.get('apiKey')?.invalid && deviceForm.get('apiKey')?.touched">
+        <small *ngIf="deviceForm.get('apiKey')?.errors?.['required']">API Key is required.</small>
+        <small *ngIf="deviceForm.get('apiKey')?.errors?.['minlength']">API Key must be at least 10 characters.</small>
+      </div>
+    </div>
+    <small>{{ addDeviceMessage }}</small>
+
+    <div class="btns">
+      <app-button [type]="'submit'" [style]="'accent'" [disabled]="deviceForm.invalid">Add Device</app-button>
+    </div>
+  </form>
+</div>
+
