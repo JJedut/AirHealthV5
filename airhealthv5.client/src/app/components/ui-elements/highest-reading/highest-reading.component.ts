@@ -20,7 +20,7 @@ export class HighestReadingComponent implements OnInit{
     this.sensorSer.sharedData$.subscribe((data) => {
       if (data && data.length > 0) {
         const numericValues = data
-          .map((reading) => parseFloat(reading.mqTwo.toString() || '0'))
+          .map((reading) => parseFloat(reading.mqTwo?.toString() || '0'))
           .filter((val) => !isNaN(val));
 
         this.highestValue = numericValues.length > 0 ? Math.max(...numericValues) : null;

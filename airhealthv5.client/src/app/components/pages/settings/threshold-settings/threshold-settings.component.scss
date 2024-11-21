@@ -1,0 +1,71 @@
+.custom-table {
+
+  td {
+    white-space: nowrap;
+  }
+
+  .color-example {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  input {
+    border: 2px solid var(--black-2);
+    background: transparent;
+    color: var(--text-color-white);
+    border-radius: 0.25rem;
+    width: 100%;
+    font-size: 1.25rem;
+    padding: 0.25rem 0.5rem;
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    text-align: end;
+  }
+
+  .cell-padd {
+    padding: 0.25rem !important;
+  }
+}
+
+.btn {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  ::ng-deep app-button {
+    button {
+      width: auto;
+    }
+  }
+}
+
+.device-list {
+  display: flex;
+  gap: 0.25rem;
+  margin: 1rem 0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-padd {
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+.warn {
+  background: var(--yellow);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+}
+.crit {
+  background: var(--red);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+.d-flex {
+  display: flex;
+  gap: 0.5rem;
+}

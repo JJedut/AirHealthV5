@@ -1,0 +1,121 @@
+<h1>Change Thresholds for {{ selectedDevice.deviceName }}</h1>
+<div class="device-list">
+  @for (device of devices; track device) {
+    <app-button
+      (click)="selectDevice(device)"
+      [style]="device.deviceId === selectedDevice.deviceId
+      ? 'accent' : 'outline-accent'">
+      {{ device.deviceName }}
+    </app-button>
+  } @empty {
+
+  }
+</div>
+<form [formGroup]="thresholdForm" (ngSubmit)="onSubmit()">
+  <div class="custom-table">
+    <table>
+      <thead>
+      <tr>
+        <th rowspan="2" class="w-30">Name</th>
+        <th colspan="2" class="custom-padd">
+          <div class="color-example">
+            <p>Warning</p>
+            <div class="warn"></div>
+          </div>
+        </th>
+        <th colspan="2" class="custom-padd">
+          <div class="color-example">
+            <p>Critical</p>
+            <div class="crit"></div>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Min</th>
+        <th>Max</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Temperature (°C)</td>
+        <td class="cell-padd"><input type="number" formControlName="temperatureMin"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="temperatureMax"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="temperatureMinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="temperatureMaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>Humidity (%)</td>
+        <td class="cell-padd"><input type="number" formControlName="humidityMin"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="humidityMax"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="humidityMinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="humidityMaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>Pressure (hPa)</td>
+        <td class="cell-padd"><input type="number" formControlName="pressureMin"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="pressureMax"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="pressureMinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="pressureMaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>MQ2 (ppm)</td>
+        <td class="cell-padd"><input type="number" formControlName="mqTwoMin"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="mqTwoMax"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="mqTwoMinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="mqTwoMaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>Gas Resistance (ohms)</td>
+        <td class="cell-padd"><input type="number" formControlName="gasResistanceMin"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="gasResistanceMax"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="gasResistanceMinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="gasResistanceMaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>PM<sub>1</sub> (µg/m³)</td>
+        <td class="cell-padd"><input type="number" formControlName="pm1Min"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm1Max"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="pm1MinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm1MaxCritical"></td> <!-- Critical Max -->
+      </tr>
+      <tr>
+        <td>PM<sub>2.5</sub> (µg/m³)</td>
+        <td class="cell-padd"><input type="number" formControlName="pm25Min"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm25Max"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="pm25MinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm25MaxCritical"></td>
+      </tr>
+      <tr>
+        <td>PM<sub>10</sub> (µg/m³)</td>
+        <td class="cell-padd"><input type="number" formControlName="pm10Min"></td> <!-- Warning Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm10Max"></td> <!-- Warning Max -->
+        <td class="cell-padd"><input type="number" formControlName="pm10MinCritical"></td> <!-- Critical Min -->
+        <td class="cell-padd"><input type="number" formControlName="pm10MaxCritical"></td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="btn">
+    <div class="error">
+      {{ message }}
+    </div>
+    <div class="d-flex">
+      <app-button
+        (click)="onReset()"
+        [style]="'outline-accent'"
+        [disabled]="thresholdForm.invalid">
+        Reset
+      </app-button>
+      <app-button
+        type="submit"
+        [style]="'accent'"
+        [disabled]="thresholdForm.invalid">
+        Save
+      </app-button>
+    </div>
+  </div>
+</form>

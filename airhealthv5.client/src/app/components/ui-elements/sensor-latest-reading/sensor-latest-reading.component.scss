@@ -2,10 +2,13 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+
+  .no-data {
+
+  }
 }
 
 .box {
-  background-color: var(--black-1);
   border-radius: 0.5rem;
   padding: 1rem;
   width: fit-content;
@@ -14,6 +17,25 @@
   display: inline-block;
   box-sizing: border-box;
   cursor: move;
+  transition: background-color 0.3s ease;
+
+  &.safe {
+    background-color: var(--black-1);
+    color: var(--text-color-white);
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, rgba(35,38,38,1) 0%, rgba(255,217,125,1) 100%);
+    border: solid 2px var(--yellow);
+    color: var(--black);
+    --lines: 4px;
+  }
+
+  &.critical {
+    background: linear-gradient(135deg, rgba(35,38,38,1) 0%, rgba(238,96,85,1) 100%);
+    border: solid 2px var(--red);
+    color: var(--black);
+  }
 }
 
 .cdk-drag-preview {

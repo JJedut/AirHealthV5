@@ -19,6 +19,12 @@
         background: var(--text-color-white) !important;
       }
     }
+
+    .t-wrapper {
+      .t-labels-x {
+        font-family: "Oxygen Mono", monospace;
+      }
+    }
   }
 
   .time-range {
@@ -60,6 +66,7 @@
     align-items: center;
     justify-content: center;
     color: var(--black-2);
+    margin: 2rem 0;
   }
 }
 

@@ -52,28 +52,18 @@
         <thead>
         <tr>
           <th class="w-10">Nr</th>
-          <th *ngIf="hasTemperature">Temp. (°C)</th>
-          <th *ngIf="hasHumidity">Humidity (%)</th>
-          <th *ngIf="hasPressure">Pressure (hPa)</th>
-          <th *ngIf="hasMqTwo">MQ2 (ppm)</th>
-          <th *ngIf="hasPm1">PM 1 (µg/m³)</th>
-          <th *ngIf="hasPm25">PM 2.5 (µg/m³)</th>
-          <th *ngIf="hasPm10">PM 10 (µg/m³)</th>
-          <th *ngIf="hasGasResistance">Gas Res. (ohms)</th>
+          <ng-container *ngFor="let column of displayedColumns">
+            <th>{{ column.label }}</th>
+          </ng-container>
           <th class="w-10 ws-nowrap">Date</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let data of sensorReadings; let i = index">
           <td>{{ i + 1 }}</td>
-          <td *ngIf="hasTemperature">{{ data.temperature }}</td>
-          <td *ngIf="hasHumidity">{{ data.humidity }}</td>
-          <td *ngIf="hasPressure">{{ data.pressure }}</td>
-          <td *ngIf="hasMqTwo">{{ data.mqTwo }}</td>
-          <td *ngIf="hasPm1">{{ data.pm1 }}</td>
-          <td *ngIf="hasPm25">{{ data.pm25 }}</td>
-          <td *ngIf="hasPm10">{{ data.pm10 }}</td>
-          <td *ngIf="hasGasResistance">{{ data.gasResistance }}</td>
+          <ng-container *ngFor="let column of displayedColumns">
+            <td>{{ data[column.key] }}</td>
+          </ng-container>
           <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm' }}</td>
         </tr>
         </tbody>

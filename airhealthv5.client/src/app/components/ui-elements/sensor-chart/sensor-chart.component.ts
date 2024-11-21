@@ -166,35 +166,25 @@ export class SensorChartComponent implements OnInit, OnChanges {
   };
 
   //todo do it better
-  get hasTemperature(): boolean {
-    return this.sensorReadings.some(data => data.temperature !== null);
+  columns: { key: keyof SensorReadingModel; label: string }[] = [
+    { key: 'temperature', label: 'Temp. (°C)' },
+    { key: 'humidity', label: 'Humidity (%)' },
+    { key: 'pressure', label: 'Pressure (hPa)' },
+    { key: 'mqTwo', label: 'MQ2 (ppm)' },
+    { key: 'pm1', label: 'PM 1 (µg/m³)' },
+    { key: 'pm25', label: 'PM 2.5 (µg/m³)' },
+    { key: 'pm10', label: 'PM 10 (µg/m³)' },
+    { key: 'gasResistance', label: 'Gas Res. (ohms)' },
+  ];
+
+  get displayedColumns() {
+    return this.columns.filter(col => this.hasData(col.key));
   }
 
-  get hasHumidity(): boolean {
-    return this.sensorReadings.some(data => data.humidity !== null);
-  }
-
-  get hasPressure(): boolean {
-    return this.sensorReadings.some(data => data.pressure !== null);
-  }
-
-  get hasMqTwo(): boolean {
-    return this.sensorReadings.some(data => data.mqTwo !== null);
-  }
-
-  get hasPm1(): boolean {
-    return this.sensorReadings.some(data => data.pm1 !== null && data.pm1 !== 0);
-  }
-
-  get hasPm25(): boolean {
-    return this.sensorReadings.some(data => data.pm25 !== null && data.pm25 !== 0);
-  }
-
-  get hasPm10(): boolean {
-    return this.sensorReadings.some(data => data.pm10 !== null && data.pm10 !== 0);
-  }
-
-  get hasGasResistance(): boolean {
-    return this.sensorReadings.some(data => data.gasResistance !== null);
+  hasData(key: keyof SensorReadingModel): boolean {
+    return this.sensorReadings.some(data => {
+      const value = data[key];
+      return value !== null && value !== 0;
+    });
   }
 }

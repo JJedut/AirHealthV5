@@ -12,6 +12,8 @@ public class DeviceModel : IDevice
     public bool IsActive { get; set; }
     public DateTime LastUpdate { get; set; }
     public DateTime Created { get; set; }
-    public int[] SensorOrder { get; set; }
+    public int[]? SensorOrder { get; set; }
+    public ThresholdsModel? Thresholds { get; set; }
+    //public ThresholdsModel CriticalThresholds { get; set; }
     public UserModel User { get; set; }
 }

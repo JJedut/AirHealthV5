@@ -1,8 +1,17 @@
 <div cdkDropList cdkDropListOrientation="mixed" class="last-reading" (cdkDropListDropped)="drop($event)">
+  <div *ngIf="sensorReadings.length === 0">
+    <h1 class="no-data">No sensor readings available</h1>
+  </div>
   @for (reading of sensorReadings; track reading) {
-    <div *ngIf="reading.value != null" class="box" cdkDrag>
+    <div *ngIf="reading.value != null" class="box" cdkDrag
+         [ngClass]="{
+         'safe': reading.state === 'safe',
+         'warning': reading.state === 'warning',
+         'critical': reading.state === 'critical'
+       }">
       <h3>{{ reading.label }}</h3>
       <h1>{{ reading.value }}</h1>
+      <h3 *ngIf="reading.state != 'safe'">{{reading.state}}</h3>
     </div>
   }
 </div>

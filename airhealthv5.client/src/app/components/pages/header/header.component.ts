@@ -66,7 +66,7 @@ export class HeaderComponent implements OnInit {
     const userId = this.authService.getUserId();
     this.deviceService.getDevicesByUserId(userId).subscribe({
       next: (devices) => {
-        console.log('Devices:', devices)
+        this.deviceService.updateDevices(devices);
         this.devices = devices;
       },
       error: (err) => console.error('Error fetching devices', err)

@@ -123,6 +123,37 @@ app-dash-board, app-settings {
   width: 100% !important;
 }
 
+.custom-table {
+  width: 100%;
+  border: solid 2px var(--black-2);
+  border-radius: 0.25rem;
+  overflow: hidden;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    th {
+      background: var(--black-1);
+      padding: 0.5rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 1px solid var(--black-2);
+    }
+
+    td {
+      padding: 0.5rem 1rem;
+    }
+
+    tr:not(:last-child) {
+      border-bottom: 1px solid var(--black-2);
+    }
+    td:not(:last-child), th:not(:last-child) {
+      border-right: 1px solid var(--black-2);
+    }
+  }
+}
+
 .card {
   border-radius: 0.8rem;
   padding: 1rem;
@@ -166,6 +197,10 @@ app-dash-board, app-settings {
 
 .w-100 {
   width: 100% !important;
+}
+
+.w-30 {
+  width: 30% !important;
 }
 
 .w-10 {

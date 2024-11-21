@@ -5,6 +5,8 @@ import {interval, Subscription} from "rxjs";
 import {startWith, switchMap} from "rxjs/operators";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DeviceService} from "../../../services/device.service";
+import {Thresholds} from "../../../models/Thresholds";
+import {DeviceModel} from "../../../models/DeviceModel";
 
 @Component({
   selector: 'app-sensor-latest-reading',
@@ -13,8 +15,10 @@ import {DeviceService} from "../../../services/device.service";
 })
 export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChanges {
   @Input() deviceId: string | null = null;
-  sensorReadings: { id: number; label: string; value: string | null }[] = [];
+  sensorReadings: { id: number; label: string; value: string | null; state: 'safe' | 'warning' | 'critical' }[] = [];
   private pollingSubscription: Subscription | undefined;
+  devices: DeviceModel[] = [];
+  thresholds!: any;
   order: number[] = [];
 
   constructor(
@@ -25,16 +29,33 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
 
   ngOnInit(): void {
     this.fetchDataForDevice();
+    this.fetchThresholds();
+  }
+
+  private fetchThresholds(): void {
+    if (!this.deviceId) {
+      this.thresholds = null; // Reset thresholds when switching devices
+      return;
+    }
+
+    this.deviceService.getThresholdByDeviceId(this.deviceId).subscribe({
+      next: (thresholds) => {
+        this.thresholds = thresholds;
+        //this.updateSensorReadings(this.sensorReadings); // Update readings with thresholds
+      },
+      error: (err) => console.error('Error fetching thresholds:', err),
+    });
   }
 
   private fetchDataForDevice(): void {
     if (!this.deviceId) {
+      this.sensorReadings = [];
+      this.order = [];
       return;
     }
 
     this.sensorReadings = [];
     this.order = [];
-
     this.getOrder();
 
     this.pollingSubscription = interval(30000)
@@ -56,7 +77,11 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['deviceId'] && this.deviceId) {
+      if (this.pollingSubscription) {
+        this.pollingSubscription.unsubscribe();
+      }
       this.fetchDataForDevice();
+      this.fetchThresholds();
     }
   }
 
@@ -64,22 +89,40 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
     if (this.pollingSubscription) {
       this.pollingSubscription.unsubscribe();
     }
-    this.sensorDataService.stopPolling();
   }
 
   private updateSensorReadings(reading: SensorReadingModel): void {
     this.sensorReadings = [
-      { id: 1, label: 'Temperature', value: reading.temperature !== null ? `${this.twoDecimal(reading.temperature)}°C` : null },
-      { id: 2, label: 'Humidity', value: reading.humidity !== null ? `${this.twoDecimal(reading.humidity)}%` : null },
-      { id: 3, label: 'Pressure', value: reading.pressure !== null ? `${reading.pressure} hPa` : null },
-      { id: 4, label: 'MQ2', value: reading.mqTwo !== null ? `${reading.mqTwo} ppm` : null },
-      { id: 5, label: 'Gas Resistance', value: reading.gasResistance !== null ? `${this.twoDecimal(reading.gasResistance)} ohms` : null },
-      { id: 6, label: 'PM 1', value: reading.pm1 !== null ? `${reading.pm1} µg/m³` : null },
-      { id: 7, label: 'PM 2.5', value: reading.pm25 !== null ? `${reading.pm25} µg/m³` : null },
-      { id: 8, label: 'PM 10', value: reading.pm10 !== null ? `${reading.pm10} µg/m³` : null },
+      { id: 1, label: 'Temperature', value: reading.temperature !== null ? `${this.twoDecimal(reading.temperature)}°C` : null, state: this.getState('temperature', reading.temperature) },
+      { id: 2, label: 'Humidity', value: reading.humidity !== null ? `${this.twoDecimal(reading.humidity)}%` : null, state: this.getState('humidity', reading.humidity) },
+      { id: 3, label: 'Pressure', value: reading.pressure !== null ? `${reading.pressure} hPa` : null, state: this.getState('pressure', reading.pressure) },
+      { id: 4, label: 'MQ2', value: reading.mqTwo !== null ? `${reading.mqTwo} ppm` : null, state: this.getState('mqTwo', reading.mqTwo) },
+      { id: 5, label: 'Gas Resistance', value: reading.gasResistance !== null ? `${this.twoDecimal(reading.gasResistance)} ohms` : null, state: this.getState('gasResistance', reading.gasResistance) },
+      { id: 6, label: 'PM 1', value: reading.pm1 !== null ? `${reading.pm1} µg/m³` : null, state: this.getState('pm1', reading.pm1) },
+      { id: 7, label: 'PM 2.5', value: reading.pm25 !== null ? `${reading.pm25} µg/m³` : null, state: this.getState('pm25', reading.pm25) },
+      { id: 8, label: 'PM 10', value: reading.pm10 !== null ? `${reading.pm10} µg/m³` : null, state: this.getState('pm10', reading.pm10) },
     ];
 
     this.applyOrderToReadings(this.order);
+  }
+
+  private getState(type: string, value: number | null): 'safe' | 'warning' | 'critical' {
+    if (value === null || !this.thresholds) return 'safe';
+
+    const min = this.thresholds[`${type}Min`];
+    const max = this.thresholds[`${type}Max`];
+    const minCritical = this.thresholds[`${type}MinCritical`];
+    const maxCritical = this.thresholds[`${type}MaxCritical`];
+
+    console.log(type,' min: ', min,' max: ', max,' minCritical: ', minCritical,' maxCritical: ', maxCritical);
+
+    if (minCritical !== null && value <= minCritical || maxCritical !== null && value >= maxCritical) {
+      return 'critical';
+    }
+    if (min !== null && value <= min || max !== null && value >= max) {
+      return 'warning';
+    }
+    return 'safe';
   }
 
   saveOrder(order: number[]) {
@@ -127,7 +170,7 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
 
     this.sensorReadings = order
       .map((id) => readingMap.get(id))
-      .filter((reading) => reading !== undefined) as { id: number; label: string; value: string | null }[];
+      .filter((reading) => reading !== undefined) as { id: number; label: string; value: string | null; state: 'safe' | 'warning' | 'critical' }[];
 
     console.log('Reordered sensorReadings:', this.sensorReadings);
   }

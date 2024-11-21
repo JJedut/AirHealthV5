@@ -29,6 +29,7 @@ import { UserSettingsComponent } from './components/pages/settings/user-settings
 import { CensorKeyPipe } from './pipes/censor-key.pipe';
 import {CdkDrag, CdkDropList} from "@angular/cdk/drag-drop";
 import { ChartComponent } from './components/ui-elements/sensor-chart/chart/chart.component';
+import { ThresholdSettingsComponent } from './components/pages/settings/threshold-settings/threshold-settings.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { ChartComponent } from './components/ui-elements/sensor-chart/chart/char
     ButtonComponent,
     UserSettingsComponent,
     CensorKeyPipe,
-    ChartComponent
+    ChartComponent,
+    ThresholdSettingsComponent
   ],
   imports: [
     BrowserModule,

@@ -31,12 +31,14 @@
     color: transparent;
     line-height: 0rem;
     transition: all 0.3s ease;
+    font-family: "Oxygen Mono", monospace;
   }
   &:hover {
     .info {
       color: var(--text-color-white);
       line-height: 2rem;
       transition: all 0.3s ease;
+      //font-family: "Oxygen Mono", monospace;
     }
   }
 }

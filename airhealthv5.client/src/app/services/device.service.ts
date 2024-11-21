@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../enviroments/enviroments";
 import {BehaviorSubject, Observable, tap} from "rxjs";
-import {ApiKeyModel} from "../models/ApiKeyModel";
 import {DeviceModel} from "../models/DeviceModel";
 import {AuthService} from "./auth.service";
+import {Thresholds} from "../models/Thresholds";
 
 @Injectable({
   providedIn: 'root'
@@ -12,23 +12,28 @@ import {AuthService} from "./auth.service";
 export class DeviceService {
   private apiUrl = `${environment.apiUrl}/Device`;
   private devicesSubject = new BehaviorSubject<DeviceModel[]>([]);
-  private currentDevice: string | null = null;
+  private currentDeviceSubject = new BehaviorSubject<DeviceModel | null>(null);
+  private currentDeviceid: string | null = null;
 
   constructor(
     private http: HttpClient,
     private authService: AuthService,
   ) { }
 
+  get currentDevice$(): Observable<DeviceModel | null> {
+    return this.currentDeviceSubject.asObservable();
+  }
+
   get devices$(): Observable<DeviceModel[]> {
     return this.devicesSubject.asObservable();
   }
 
   get currentDeviceId(): string | null {
-    return this.currentDevice || localStorage.getItem('activeDeviceId');
+    return this.currentDeviceid || localStorage.getItem('activeDeviceId');
   }
 
   set currentDeviceId(deviceId: string) {
-    this.currentDevice = deviceId;
+    this.currentDeviceid = deviceId;
   }
 
   updateDevices(devices: DeviceModel[]): void {
@@ -86,4 +91,15 @@ export class DeviceService {
     return this.http.get<number[]>(`${this.apiUrl}/GetSensorOrderByUserId/${userId}`);
   }
 
+  setThresholds(deviceId: string, thresholds: Thresholds): Observable<boolean> {
+    const payload = {
+      deviceId,
+      ...thresholds,
+    }
+    return this.http.post<boolean>(`${this.apiUrl}/Thresholds`, payload)
+  }
+
+  getThresholdByDeviceId(deviceId: string): Observable<Thresholds> {
+    return this.http.get<Thresholds>(`${this.apiUrl}/GetThresholdsByDeviceId/${deviceId}`);
+  }
 }

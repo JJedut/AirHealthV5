@@ -1,3 +1,5 @@
+import {Thresholds} from "./Thresholds";
+
 export interface DeviceModel {
   id: number;
   deviceId: string;
@@ -7,4 +9,7 @@ export interface DeviceModel {
   isActive: boolean;
   lastUpdate: Date;
   created: Date;
+  sensorOrder: number[];
+  thresholds: Thresholds;
+  thresholdsCritical: Thresholds;
 }

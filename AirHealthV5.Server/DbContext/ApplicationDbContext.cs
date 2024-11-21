@@ -18,16 +18,22 @@ public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserModel>()
-            .HasKey(u => u.Id); // Primary Key
+            .HasKey(u => u.Id);
         modelBuilder.Entity<UserModel>()
-            .HasAlternateKey(u => u.UserId); // Alternate Key for relationships
+            .HasAlternateKey(u => u.UserId);
 
         modelBuilder.Entity<DeviceModel>()
             .HasOne(d => d.User)
             .WithMany(u => u.Devices)
             .HasForeignKey(d => d.UserId)
-            .HasPrincipalKey(u => u.UserId) // Use UserId as the principal key
+            .HasPrincipalKey(u => u.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<DeviceModel>()
+            .OwnsOne(d => d.Thresholds);
+        
+        //modelBuilder.Entity<DeviceModel>()
+        //    .OwnsOne(d => d.CriticalThresholds);
 
         base.OnModelCreating(modelBuilder);
     }

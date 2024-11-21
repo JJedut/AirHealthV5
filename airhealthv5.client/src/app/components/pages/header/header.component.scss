@@ -7,6 +7,14 @@
   padding: 0.75rem 0;
   //margin-bottom: 2rem;
   z-index: 999;
+
+  .devices-list-container {
+    display: flex;
+    flex-direction: row;
+    max-width: 130vh;
+    column-gap: 0.25rem;
+    overflow: auto;
+  }
 }
 
 .empty-space {
@@ -30,6 +38,7 @@
   ::ng-deep app-button {
     button {
       width: auto !important;
+      white-space: nowrap !important;
     }
   }
 }

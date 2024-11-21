@@ -5,7 +5,7 @@
       <app-button
         (click)="navigateToAddDevice()"
         [style]="'filled'" [size]="'medium'">
-         <span class="add">+</span> Device
+         Add Device
       </app-button>
       <div *ngIf="devices.length > 0" class="line"></div>
       <ng-container *ngFor="let device of devices">

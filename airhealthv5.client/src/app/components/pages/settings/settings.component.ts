@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {UserSettingsComponent} from "./user-settings/user-settings.component";
 import {DeviceApiKeysComponent} from "../devices/device-api-keys/device-api-keys.component";
 import {UserService} from "../../../services/user.service";
+import {ThresholdSettingsComponent} from "./threshold-settings/threshold-settings.component";
 
 @Component({
   selector: 'app-settings',
@@ -20,6 +21,10 @@ export class SettingsComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
   ) {}
+
+  get isUserAdmin(): boolean {
+    return this.isAdmin;
+  }
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
@@ -42,4 +47,6 @@ export class SettingsComponent implements OnInit {
       }
     );
   }
+
+    protected readonly ThresholdSettingsComponent = ThresholdSettingsComponent;
 }
