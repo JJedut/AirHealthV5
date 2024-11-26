@@ -3,12 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import {BehaviorSubject, Observable, of, Subject, Subscription, timer} from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { SensorReadingModel } from '../models/SensorReadingModel';
+import {environment} from "../../enviroments/enviroments";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SensorDataService implements OnDestroy {
-  private apiUrl = 'https://192.168.33.109:7096/api/SensorData'; // Update with your API base URL
+  private apiUrl = `${environment.apiUrl}/SensorData`;
   private stopPolling$ = new Subject<void>();
   private subscription: Subscription | undefined;
   private sharedDataSource = new BehaviorSubject<SensorReadingModel[]>([]);
@@ -38,6 +39,29 @@ export class SensorDataService implements OnDestroy {
     }
 
     return this.http.get<SensorReadingModel[]>(`${this.apiUrl}/GetSensorData`, { params });
+  }
+
+  getSensorDataTable(
+    deviceId: string | null,
+    from: Date,
+    to: Date,
+    pageNumber: number,
+    pageSize: number
+  ): Observable<SensorReadingModel[]> {
+    let params = new HttpParams();
+    const fromUtc = new Date(from.getTime() - (from.getTimezoneOffset() * 60000));
+    const toUtc = new Date(to.getTime() - (to.getTimezoneOffset() * 60000));
+
+    if (deviceId) {
+      params = params
+        .set('deviceId', deviceId)
+        .set('from', fromUtc.toISOString())
+        .set('to', toUtc.toISOString())
+        .set('pageNumber', pageNumber.toString())
+        .set('pageSize', pageSize.toString());
+    }
+
+    return this.http.get<SensorReadingModel[]>(`${this.apiUrl}/GetSensorDataTable`, { params });
   }
 
   getLatestSensorReading(deviceId: string | null): Observable<SensorReadingModel> {

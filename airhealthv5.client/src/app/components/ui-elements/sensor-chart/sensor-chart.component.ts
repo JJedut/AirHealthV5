@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {SensorDataService} from "../../../services/sensor-data.service";
 import {SensorReadingModel} from "../../../models/SensorReadingModel";
 import {ChartData} from "../../../models/chartData";
+import {TimeRange} from "../../../models/TimeRange";
 
 @Component({
   selector: 'app-sensor-chart',
@@ -19,6 +20,15 @@ export class SensorChartComponent implements OnInit, OnChanges {
   toDateNum: Date = new Date();
   axisYLabels: string[] = [];
   width: number = 0;
+
+  //
+  deviceReadings: SensorReadingModel[] = [];
+  currentPage: number = 1;
+  pageSize: number = 100;
+  totalPages: number = 0; // Adjust if API provides total count
+  isLoading: boolean = false;
+
+  timeRange: TimeRange = { from: this.fromDateNum, to: this.toDateNum };
 
   mqTwoReadings: Readonly<[number, number]>[] = [];
   temperatureReadings: Readonly<[number, number]>[] = [];
@@ -41,12 +51,14 @@ export class SensorChartComponent implements OnInit, OnChanges {
     this.toDate = this.fromDateNum.toISOString().substring(0, 16);
 
     this.fetchSensorData();
+    this.loadSensorData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['deviceId'] && changes['deviceId'].currentValue) {
       console.log('Device ID changed:', this.deviceId);
       this.fetchSensorData();
+      this.loadSensorData();
     }
   }
 
@@ -186,5 +198,29 @@ export class SensorChartComponent implements OnInit, OnChanges {
       const value = data[key];
       return value !== null && value !== 0;
     });
+  }
+
+
+  loadSensorData(): void {
+    this.isLoading = true;
+    this.fromDateNum = new Date(this.fromDate);
+    this.toDateNum = new Date(this.toDate);
+
+    this.sensorDataService.getSensorDataTable(this.deviceId, this.fromDateNum, this.toDateNum, this.currentPage, this.pageSize)
+      .subscribe({
+        next: (data) => {
+          this.deviceReadings = data;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadSensorData();
   }
 }

@@ -2,7 +2,7 @@
   <div class="time-range">
     <input type="datetime-local" [(ngModel)]="fromDate"/>
     <input type="datetime-local" [(ngModel)]="toDate"/>
-    <app-button [style]="'filled'" (click)="fetchSensorData()">Fetch</app-button>
+    <app-button [style]="'filled'" (click)="loadSensorData()">Fetch</app-button>
     <app-button [style]="'filled'" (click)="tableGraphToggle()">{{ isTableView ? 'Graph' : 'Table' }}</app-button>
   </div>
   <div *ngIf="temperatureReadings.length > 0 || sensorReadings.length > 0">
@@ -59,7 +59,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of sensorReadings; let i = index">
+        <tr *ngFor="let data of deviceReadings; let i = index">
           <td>{{ i + 1 }}</td>
           <ng-container *ngFor="let column of displayedColumns">
             <td>{{ data[column.key] }}</td>
@@ -68,6 +68,12 @@
         </tr>
         </tbody>
       </table>
+      <!-- Pagination Controls -->
+      <div class="pagination-controls" *ngIf="!isLoading">
+        <app-button [style]="'outline-accent'" [size]="'small'" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"><</app-button>
+        <span>Page {{ currentPage }}</span>
+        <app-button [style]="'outline-accent'" [size]="'small'" (click)="onPageChange(currentPage + 1)" [disabled]="deviceReadings.length < pageSize">></app-button>
+      </div>
     </div>
   </div>
   <div *ngIf="sensorReadings.length == 0" class="no-data">
