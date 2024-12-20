@@ -10,21 +10,46 @@ namespace AirHealthV5.Server.Controllers;
 public class SensorDataController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<SensorDataController> _logger;
 
-    public SensorDataController(IMediator mediator)
+    public SensorDataController(IMediator mediator, ILogger<SensorDataController> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
-    [HttpPost("Receive")]
+    [HttpPost]
     public async Task<IActionResult> ReceiveSensorData([FromBody] SensorDataCommand command)
     {
-        var response = await _mediator.Send(command);
-        return Ok(response);
+        if (command == null)
+        {
+            return BadRequest("Command body is required.");
+        }
+
+        try
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
     
     [HttpGet("GetSensorData")]
-    public async Task<ActionResult<IEnumerable<DeviceReadingModel>>> GetSensorData([FromQuery] SensorDataQuery query)
+    public async Task<ActionResult<IEnumerable<IEnumerable<DeviceReadingModel>>>> GetSensorData([FromQuery] SensorDataQuery query)
+    {
+        var response = await _mediator.Send(query);
+        return Ok(response);
+    }
+    
+    [HttpGet("GetSensorDataTable")]
+    public async Task<ActionResult> GetSensorDataTable([FromQuery] GetDataTableQuery query)
     {
         var response = await _mediator.Send(query);
         return Ok(response);

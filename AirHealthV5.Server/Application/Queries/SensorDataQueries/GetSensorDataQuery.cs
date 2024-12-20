@@ -4,13 +4,13 @@ using MediatR;
 
 namespace AirHealthV5.Server.Application.Queries.SensorDataQueries;
 
-public class SensorDataQuery : IRequest<List<DeviceReadingModel>>
+public class SensorDataQuery : IRequest<List<List<DeviceReadingModel>>>
 {
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }
     public Guid DeviceId { get; set; }
 }
-public class GetSensorDataQuery : IRequestHandler<SensorDataQuery, List<DeviceReadingModel>>
+public class GetSensorDataQuery : IRequestHandler<SensorDataQuery, List<List<DeviceReadingModel>>>
 {
     IDeviceReadingRepository _deviceReadingRepository;
 
@@ -19,7 +19,7 @@ public class GetSensorDataQuery : IRequestHandler<SensorDataQuery, List<DeviceRe
         _deviceReadingRepository = deviceReadingRepository;
     }
 
-    public async Task<List<DeviceReadingModel>> Handle(SensorDataQuery request, CancellationToken cancellationToken)
+    public async Task<List<List<DeviceReadingModel>>> Handle(SensorDataQuery request, CancellationToken cancellationToken)
     {
         // Validate request
         if (request.From == null || request.To == null || request.From > request.To)
@@ -28,44 +28,59 @@ public class GetSensorDataQuery : IRequestHandler<SensorDataQuery, List<DeviceRe
         }
 
         // Fetch raw sensor readings from repository
-        var sensorReadings = await _deviceReadingRepository.GetSensorReadingsAsync(request, cancellationToken);
+        var sensorReadings = await _deviceReadingRepository
+            .GetSensorReadingsAsync(request, cancellationToken);
 
-        // Filter readings by DeviceId
-        var filteredReadings = sensorReadings
-            .Where(sr => sr.DeviceId == request.DeviceId.ToString())
-            .ToList();
+        // If no data is found, return an empty list
+        if (!sensorReadings.Any())
+            return new List<List<DeviceReadingModel>>();
 
-        // If no data is found for the given DeviceId, return an empty list
-        if (!filteredReadings.Any())
-            return new List<DeviceReadingModel>();
+        // Split readings into segments based on time gaps
+        const int gapThresholdSeconds = 300; // Define a gap threshold (e.g., 5 minutes)
+        var segmentedReadings = new List<List<DeviceReadingModel>>();
+        var currentSegment = new List<DeviceReadingModel>();
 
-        // Limit the number of points to a maximum of 500
-        const int maxPoints = 50;
-        if (filteredReadings.Count > maxPoints)
+        for (int i = 0; i < sensorReadings.Count; i++)
         {
-            int step = filteredReadings.Count / maxPoints;
-            filteredReadings = filteredReadings
-                .Where((sr, index) => index % step == 0)
-                .Take(maxPoints) // Ensure we don't accidentally overshoot 500 points
-                .ToList();
+            var reading = sensorReadings[i];
+            var nextReading = i < sensorReadings.Count - 1 ? sensorReadings[i + 1] : null;
+
+            currentSegment.Add(reading);
+
+            if (nextReading != null)
+            {
+                var timeDifference = (nextReading.Timestamp - reading.Timestamp).TotalSeconds;
+                if (timeDifference > gapThresholdSeconds)
+                {
+                    segmentedReadings.Add(new List<DeviceReadingModel>(currentSegment));
+                    currentSegment.Clear();
+                }
+            }
         }
 
-        // Map filtered and subsampled data to DeviceReadingModel
-        var result = filteredReadings.Select(sr => new DeviceReadingModel
+        // Add the final segment
+        if (currentSegment.Any())
         {
-            Id = sr.Id,
-            DeviceId = sr.DeviceId,
-            MqTwo = sr.MqTwo,
-            Temperature = sr.Temperature,
-            Humidity = sr.Humidity,
-            Pressure = sr.Pressure,
-            GasResistance = sr.GasResistance,
-            Pm1 = sr.Pm1,
-            Pm25 = sr.Pm25,
-            Pm10 = sr.Pm10,
-            Timestamp = sr.Timestamp
-        }).ToList();
+            segmentedReadings.Add(currentSegment);
+        }
 
-        return result;
+        // Limit each segment to a maximum of 50 points
+        const int maxPoints = 50;
+        var limitedSegments = segmentedReadings
+            .Select(segment =>
+            {
+                if (segment.Count > maxPoints)
+                {
+                    int step = segment.Count / maxPoints;
+                    return segment
+                        .Where((reading, index) => index % step == 0)
+                        .Take(maxPoints)
+                        .ToList();
+                }
+                return segment;
+            })
+            .ToList();
+
+        return limitedSegments;
     }
 }

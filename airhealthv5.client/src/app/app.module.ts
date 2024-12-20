@@ -30,6 +30,7 @@ import { CensorKeyPipe } from './pipes/censor-key.pipe';
 import {CdkDrag, CdkDropList} from "@angular/cdk/drag-drop";
 import { ChartComponent } from './components/ui-elements/sensor-chart/chart/chart.component';
 import { ThresholdSettingsComponent } from './components/pages/settings/threshold-settings/threshold-settings.component';
+import { TableComponent } from './components/ui-elements/sensor-chart/table/table.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ThresholdSettingsComponent } from './components/pages/settings/threshol
     UserSettingsComponent,
     CensorKeyPipe,
     ChartComponent,
-    ThresholdSettingsComponent
+    ThresholdSettingsComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,

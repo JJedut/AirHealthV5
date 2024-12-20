@@ -15,12 +15,42 @@ public class DeviceReadingRepository : IDeviceReadingRepository
         _context = context;
     }
 
-    public async Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataQuery query, CancellationToken cancellationToken)
+    public async Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataQuery query,
+        CancellationToken cancellationToken)
     {
         return await _context.DeviceReadings
             .Where(sr => sr.Timestamp >= query.From && sr.Timestamp <= query.To && sr.DeviceId == query.DeviceId.ToString())
             .OrderBy(sr => sr.Timestamp)
             .ToListAsync(cancellationToken);
+    }
+    
+    public async Task<List<DeviceReadingModel>> GetSensorTableData(GetDataTableQuery query, 
+        CancellationToken cancellationToken)
+    {
+        int pageNumber = query.PageNumber ?? 1;
+        int pageSize = query.PageSize ?? 100;
+        
+        int skip = (pageNumber - 1) * pageSize;
+        
+        return await _context.DeviceReadings
+            .Where(sr => 
+                sr.Timestamp >= query.From 
+                && sr.Timestamp <= query.To 
+                && sr.DeviceId == query.DeviceId.ToString())
+            .OrderBy(sr => sr.Timestamp)
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+    }
+    
+    public async Task<int> GetSensorTableDataCount(GetDataTableQuery query, CancellationToken cancellationToken)
+    {
+        return await _context.DeviceReadings
+            .Where(sr =>
+                sr.Timestamp >= query.From
+                && sr.Timestamp <= query.To
+                && sr.DeviceId == query.DeviceId.ToString())
+            .CountAsync(cancellationToken);
     }
 
     public async Task<DeviceReadingModel?> GetLatestSensorReading(GetLatestReadingQuery query, CancellationToken cancellationToken)

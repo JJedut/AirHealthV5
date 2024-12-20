@@ -2,48 +2,16 @@
   <div class="time-range">
     <input type="datetime-local" [(ngModel)]="fromDate"/>
     <input type="datetime-local" [(ngModel)]="toDate"/>
-    <app-button [style]="'filled'" (click)="loadSensorData()">Fetch</app-button>
+    <app-button [style]="'filled'" (click)="loadDataForDevice()">Fetch</app-button>
     <app-button [style]="'filled'" (click)="tableGraphToggle()">{{ isTableView ? 'Graph' : 'Table' }}</app-button>
   </div>
   <div *ngIf="temperatureReadings.length > 0 || sensorReadings.length > 0">
-    <div *ngIf="!isTableView">
-      <h2 class="title">{{ 'Temperature' }}</h2>
-      <tui-axes
-        class="axes"
-        [axisXLabels]="axisYLabels"
-        [horizontalLines]="4"
-        [verticalLines]="6">
-        <tui-line-chart
-          class="chart"
-          [dots]="false"
-          [height]="30"
-          [value]="temperatureReadings"
-          [width]="width"
-          [x]="0"
-          [xStringify]="stringify"
-          [y]="10"
-          [yStringify]="stringify"
-        />
-      </tui-axes>
 
-      <h2 class="title">{{ 'Humidity' }}</h2>
-      <tui-axes
-        class="axes"
-        [axisXLabels]="axisYLabels"
-        [horizontalLines]="4"
-        [verticalLines]="6">
-        <tui-line-chart
-          class="chart"
-          [dots]="false"
-          [height]="100"
-          [value]="humidityReadings"
-          [width]="width"
-          [x]="0"
-          [xStringify]="stringify"
-          [y]="0"
-          [yStringify]="stringify"
-        />
-      </tui-axes>
+    <!--CHART-->
+    <div *ngIf="!isTableView">
+      <div *ngFor="let data of allChartData; trackBy: trackById">
+        <app-chart [data]="data" [axisXLabels]="axisYLabels" [fromDateNum]="fromDateNum"></app-chart>
+      </div>
     </div>
 
     <!--TABLE-->
@@ -60,7 +28,7 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of deviceReadings; let i = index">
-          <td>{{ i + 1 }}</td>
+          <td>{{ (i + 1) + (currentPage - 1) * pageSize }}</td>
           <ng-container *ngFor="let column of displayedColumns">
             <td>{{ data[column.key] }}</td>
           </ng-container>
@@ -68,15 +36,38 @@
         </tr>
         </tbody>
       </table>
+
+      <div *ngIf="!isLoading && deviceReadings.length === 0" class="no-data">
+        No data available.
+      </div>
+
       <!-- Pagination Controls -->
-      <div class="pagination-controls" *ngIf="!isLoading">
-        <app-button [style]="'outline-accent'" [size]="'small'" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1"><</app-button>
-        <span>Page {{ currentPage }}</span>
-        <app-button [style]="'outline-accent'" [size]="'small'" (click)="onPageChange(currentPage + 1)" [disabled]="deviceReadings.length < pageSize">></app-button>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <app-button
+          [style]="'outline-accent'"
+          [size]="'small'"
+          (click)="onPageChange(1)"
+          [disabled]="currentPage === 1"><<</app-button>
+        <app-button
+          [style]="'outline-accent'"
+          [size]="'small'"
+          (click)="onPageChange(currentPage - 1)"
+          [disabled]="currentPage === 1"><</app-button>
+        <span>{{ currentPage }}-{{ totalPages }}</span>
+        <app-button
+          [style]="'outline-accent'"
+          [size]="'small'"
+          (click)="onPageChange(currentPage + 1)"
+          [disabled]="deviceReadings.length < pageSize">></app-button>
+        <app-button
+          [style]="'outline-accent'"
+          [size]="'small'"
+          (click)="onPageChange(totalPages)"
+          [disabled]="deviceReadings.length < pageSize">>></app-button>
       </div>
     </div>
   </div>
-  <div *ngIf="sensorReadings.length == 0" class="no-data">
+  <div *ngIf="deviceReadings.length == 0" class="no-data">
     <h1>{{ 'noDataFound' }}</h1>
   </div>
 </div>

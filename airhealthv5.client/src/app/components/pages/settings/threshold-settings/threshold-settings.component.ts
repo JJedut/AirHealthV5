@@ -129,7 +129,6 @@ export class ThresholdSettingsComponent implements OnInit {
     this.deviceService.getDevicesByUserId(userId).subscribe({
       next: (devices) => {
         this.devices = devices;
-        console.log('Devices:', devices[1].thresholds);
       },
       error: (err) => console.error('Error fetching devices', err)
     });

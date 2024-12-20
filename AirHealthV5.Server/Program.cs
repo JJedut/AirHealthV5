@@ -13,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var services = builder.Services;
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole(); // Ensure Console Logger is Added
+builder.Logging.AddDebug();
+
 // Add services to the container.
 services.AddCors(options =>
 {
@@ -20,7 +24,7 @@ services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:4200", 
-                "https://192.168.33.109:7096", 
+                "https://192.168.33.102:7096", 
                 "https://127.0.0.1:4200"
                 )
             .AllowAnyHeader()

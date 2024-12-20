@@ -26,6 +26,7 @@
 
   &.warning {
     background: linear-gradient(135deg, rgba(35,38,38,1) 0%, rgba(255,217,125,1) 100%);
+    box-shadow: rgba(255,217,125, 0.6) 0px 0px 100px;
     border: solid 2px var(--yellow);
     color: var(--black);
     --lines: 4px;
@@ -33,6 +34,7 @@
 
   &.critical {
     background: linear-gradient(135deg, rgba(35,38,38,1) 0%, rgba(238,96,85,1) 100%);
+    box-shadow: rgba(238,96,85, 0.75) 0px 0px 150px;
     border: solid 2px var(--red);
     color: var(--black);
   }

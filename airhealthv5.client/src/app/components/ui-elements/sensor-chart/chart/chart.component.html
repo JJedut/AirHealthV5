@@ -1,20 +1,26 @@
-<h2 class="title">{{ 'Temperature' }}</h2>
+<div
+  [ngClass]="{ 'hidden': !isVisible, 'show': isVisible }" class="chart-header">
+  <h2 class="title">{{ data.title }}</h2>
+  <app-button (click)="toggleVisibility()" [style]="'text-only'" [size]="'small'" >{{ isVisible ? 'Hide' : 'Show' }}</app-button>
+</div>
 <tui-axes
+  [ngClass]="{ 'hidden': !isVisible }"
   class="axes"
-  [axisXLabels]="axisYLabels"
+  [axisXLabels]="axisXLabels"
+  [axisYLabels]="data.yLabels"
   [horizontalLines]="4"
   [verticalLines]="6">
   <tui-line-chart
+    *ngFor="let segment of data.value"
     class="chart"
+    [filled]="true"
     [dots]="false"
-    [value]="data"
-
-    [x]="0"
-    [width]="width"
-    [xStringify]="stringify"
-
-    [y]="10"
-    [height]="30"
-    [yStringify]="stringify"
+    [height]="data.height"
+    [value]="segment"
+    [width]="data.width"
+    [x]="data.x"
+    [xStringify]="dateStringify"
+    [y]="data.y"
+    [yStringify]="getUnitStringify(data.unit)"
   />
 </tui-axes>

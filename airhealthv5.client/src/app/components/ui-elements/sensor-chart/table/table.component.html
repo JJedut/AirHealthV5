@@ -1,0 +1,38 @@
+<button (click)="loadSensorData()">get</button>
+
+<h3>{{ timeRange.from }} | {{ timeRange.to }} | {{ deviceId }}</h3>
+
+<div *ngIf="isLoading" class="loading">Loading...</div>
+
+<table>
+  <thead>
+  <tr>
+    <th class="w-10">Nr</th>
+    <ng-container *ngFor="let column of displayedColumns">
+      <th>{{ column.label }}</th>
+    </ng-container>
+    <th class="w-10 ws-nowrap">Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of deviceReadings; let i = index">
+    <td>{{ i + 1 }}</td>
+    <ng-container *ngFor="let column of displayedColumns">
+      <td>{{ data[column.key] }}</td>
+    </ng-container>
+    <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm' }}</td>
+  </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!isLoading && deviceReadings.length === 0" class="no-data">
+  No data available.
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-controls" *ngIf="!isLoading">
+  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }}</span>
+  <button (click)="onPageChange(currentPage + 1)" [disabled]="deviceReadings.length < pageSize">Next</button>
+</div>
+

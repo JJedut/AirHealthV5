@@ -22,4 +22,6 @@ public interface IDeviceRepository
         CancellationToken cancellationToken);
     public Task<ThresholdsModel?> GetThresholds(string deviceId, 
         CancellationToken cancellationToken);
+    public Task<DeviceModel> GetDeviceByApiKey(string apiKey, 
+        CancellationToken cancellationToken);
 }

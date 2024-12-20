@@ -31,9 +31,6 @@ public class ApplicationDbContext : Microsoft.EntityFrameworkCore.DbContext
         
         modelBuilder.Entity<DeviceModel>()
             .OwnsOne(d => d.Thresholds);
-        
-        //modelBuilder.Entity<DeviceModel>()
-        //    .OwnsOne(d => d.CriticalThresholds);
 
         base.OnModelCreating(modelBuilder);
     }

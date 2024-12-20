@@ -4,6 +4,7 @@ import {BehaviorSubject, Observable, of, Subject, Subscription, timer} from 'rxj
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { SensorReadingModel } from '../models/SensorReadingModel';
 import {environment} from "../../enviroments/enviroments";
+import {PaginatedData} from "../models/DTO/PaginatedData";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class SensorDataService implements OnDestroy {
     this.sharedDataSource.next(data);
   }
 
-  getSensorData(deviceId: string | null, from?: Date, to?: Date): Observable<SensorReadingModel[]> {
+  getSensorData(deviceId: string | null, from?: Date, to?: Date): Observable<SensorReadingModel[][]> {
     let params = new HttpParams();
 
     if (from) {
@@ -38,7 +39,7 @@ export class SensorDataService implements OnDestroy {
       params = params.append('DeviceId', deviceId);
     }
 
-    return this.http.get<SensorReadingModel[]>(`${this.apiUrl}/GetSensorData`, { params });
+    return this.http.get<SensorReadingModel[][]>(`${this.apiUrl}/GetSensorData`, { params });
   }
 
   getSensorDataTable(
@@ -47,21 +48,21 @@ export class SensorDataService implements OnDestroy {
     to: Date,
     pageNumber: number,
     pageSize: number
-  ): Observable<SensorReadingModel[]> {
+  ): Observable<PaginatedData> {
     let params = new HttpParams();
     const fromUtc = new Date(from.getTime() - (from.getTimezoneOffset() * 60000));
     const toUtc = new Date(to.getTime() - (to.getTimezoneOffset() * 60000));
 
     if (deviceId) {
       params = params
-        .set('deviceId', deviceId)
-        .set('from', fromUtc.toISOString())
-        .set('to', toUtc.toISOString())
-        .set('pageNumber', pageNumber.toString())
-        .set('pageSize', pageSize.toString());
+        .set('From', fromUtc.toISOString())
+        .set('To', toUtc.toISOString())
+        .set('DeviceId', deviceId)
+        .set('PageSize', pageSize.toString())
+        .set('PageNumber', pageNumber.toString());
     }
 
-    return this.http.get<SensorReadingModel[]>(`${this.apiUrl}/GetSensorDataTable`, { params });
+    return this.http.get<PaginatedData>(`${this.apiUrl}/GetSensorDataTable`, { params });
   }
 
   getLatestSensorReading(deviceId: string | null): Observable<SensorReadingModel> {

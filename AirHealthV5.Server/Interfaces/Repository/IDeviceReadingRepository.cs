@@ -10,7 +10,10 @@ public interface IDeviceReadingRepository
         CancellationToken cancellationToken);
     public Task<string> SaveSensorReadingAsync(DeviceReadingModel sensorReading,
         CancellationToken cancellationToken);
-
     public Task<DeviceReadingModel?> GetLatestSensorReading(
         GetLatestReadingQuery query, CancellationToken cancellationToken);
+    public Task<List<DeviceReadingModel>> GetSensorTableData(
+        GetDataTableQuery query, CancellationToken cancellationToken);
+    public Task<int> GetSensorTableDataCount(GetDataTableQuery query, 
+        CancellationToken cancellationToken);
 }

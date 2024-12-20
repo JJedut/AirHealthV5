@@ -14,6 +14,5 @@ public class DeviceModel : IDevice
     public DateTime Created { get; set; }
     public int[]? SensorOrder { get; set; }
     public ThresholdsModel? Thresholds { get; set; }
-    //public ThresholdsModel CriticalThresholds { get; set; }
     public UserModel User { get; set; }
 }

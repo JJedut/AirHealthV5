@@ -184,4 +184,16 @@ public class DevicesRepository : IDeviceRepository
             Pm10MaxCritical = device.Thresholds.Pm10MaxCritical,
         };
     }
+
+    public async Task<DeviceModel> GetDeviceByApiKey(string apiKey, CancellationToken cancellationToken)
+    {
+        var device = await _context.Devices.FirstOrDefaultAsync(x => x.ApiKey == apiKey, cancellationToken);
+        
+        if (device == null)
+        {
+            return null;
+        }
+
+        return device;
+    }
 }
