@@ -210,3 +210,10 @@ app-dash-board, app-settings {
 .ws-nowrap {
   white-space: nowrap !important;
 }
+
+@media (max-width: 1268px) {
+  .app-root {
+    max-width: none !important;
+    margin: 0 auto;
+  }
+}

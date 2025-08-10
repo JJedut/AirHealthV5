@@ -49,18 +49,4 @@ export class AddDeviceComponent {
       });
     }
   }
-
-  jsonCode: string = `
-{
-  "DeviceId": "deviceId",
-  "MqTwo": number,
-  "Temperature": number,
-  "Humidity": number,
-  "Pressure": number,
-  "GasResistance": number,
-  "Pm1": number,
-  "Pm25": number,
-  "Pm10": number
-}
-`;
 }

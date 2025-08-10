@@ -26,13 +26,13 @@ export class ChangeThemeService {
 
   private mapValueToTheme(value: number): string {
     if (value <= 50) {
-      return 'green-theme';   // Good (low pollution)
+      return 'green-theme';
     } else if (value <= 100) {
-      return 'yellow-theme';  // Moderate
+      return 'yellow-theme';
     } else if (value <= 150) {
-      return 'orange-theme';  // Unhealthy for sensitive groups
+      return 'orange-theme';
     } else {
-      return 'red-theme';     // Unhealthy
+      return 'red-theme';
     }
   }
 

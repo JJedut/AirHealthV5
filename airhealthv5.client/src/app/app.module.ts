@@ -9,8 +9,6 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TuiArcChart, TuiAxes, TuiLineChart, TuiLineChartHint, TuiLineDaysChart} from "@taiga-ui/addon-charts";
 import { SensorLatestReadingComponent } from './components/ui-elements/sensor-latest-reading/sensor-latest-reading.component';
 import { DashBoardComponent } from './components/pages/dash-borad/dash-board.component';
-import { LowestReadingComponent } from './components/ui-elements/lowest-reading/lowest-reading.component';
-import { HighestReadingComponent } from './components/ui-elements/highest-reading/highest-reading.component';
 import {MatFormField} from "@angular/material/form-field";
 import {MatDatepickerToggle, MatDateRangeInput, MatDateRangePicker} from "@angular/material/datepicker";
 import { HeaderComponent } from './components/pages/header/header.component';
@@ -38,8 +36,6 @@ import { TableComponent } from './components/ui-elements/sensor-chart/table/tabl
     SensorChartComponent,
     SensorLatestReadingComponent,
     DashBoardComponent,
-    LowestReadingComponent,
-    HighestReadingComponent,
     HeaderComponent,
     SettingsComponent,
     LoginComponent,

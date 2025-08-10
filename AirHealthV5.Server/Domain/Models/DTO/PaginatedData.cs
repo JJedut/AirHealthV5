@@ -2,10 +2,10 @@
 
 public class PaginatedData
 {
-    public List<DeviceReadingModel> Data { get; set; }
+    public List<DeviceReadingDto> Data { get; set; }
     public int TotalPages { get; set; }
 
-    public PaginatedData(List<DeviceReadingModel> data, int totalPages)
+    public PaginatedData(List<DeviceReadingDto> data, int totalPages)
     {
         Data = data;
         TotalPages = totalPages;

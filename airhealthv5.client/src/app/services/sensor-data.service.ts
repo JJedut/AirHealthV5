@@ -5,6 +5,8 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { SensorReadingModel } from '../models/SensorReadingModel';
 import {environment} from "../../enviroments/enviroments";
 import {PaginatedData} from "../models/DTO/PaginatedData";
+import {SensorReadingDTO} from "../models/DTO/SensorReadingDTO";
+import {ChartFormat} from "../models/ChartFormat";
 
 @Injectable({
   providedIn: 'root'
@@ -13,16 +15,16 @@ export class SensorDataService implements OnDestroy {
   private apiUrl = `${environment.apiUrl}/SensorData`;
   private stopPolling$ = new Subject<void>();
   private subscription: Subscription | undefined;
-  private sharedDataSource = new BehaviorSubject<SensorReadingModel[]>([]);
+  private sharedDataSource = new BehaviorSubject<SensorReadingDTO[]>([]);
   sharedData$ = this.sharedDataSource.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  updateData(data: SensorReadingModel[]) {
+  updateData(data: SensorReadingDTO[]) {
     this.sharedDataSource.next(data);
   }
 
-  getSensorData(deviceId: string | null, from?: Date, to?: Date): Observable<SensorReadingModel[][]> {
+  getSensorDataChart(deviceId: string | null, from?: Date, to?: Date): Observable<ChartFormat> {
     let params = new HttpParams();
 
     if (from) {
@@ -39,7 +41,7 @@ export class SensorDataService implements OnDestroy {
       params = params.append('DeviceId', deviceId);
     }
 
-    return this.http.get<SensorReadingModel[][]>(`${this.apiUrl}/GetSensorData`, { params });
+    return this.http.get<ChartFormat>(`${this.apiUrl}/GetSensorDataChart`, { params });
   }
 
   getSensorDataTable(
@@ -65,23 +67,22 @@ export class SensorDataService implements OnDestroy {
     return this.http.get<PaginatedData>(`${this.apiUrl}/GetSensorDataTable`, { params });
   }
 
-  getLatestSensorReading(deviceId: string | null): Observable<SensorReadingModel> {
+  getLatestSensorReading(deviceId: string | null): Observable<SensorReadingDTO> {
     let params = new HttpParams();
     if (deviceId) {
       params = params.append('DeviceId', deviceId);
     }
 
     console.log('DeviceId', deviceId)
-    return this.http.get<SensorReadingModel>(`${this.apiUrl}/GetLatestSensorReading`, { params });
+    return this.http.get<SensorReadingDTO>(`${this.apiUrl}/GetLatestSensorReading`, { params });
   }
 
   startPolling(deviceId: string | null): void {
-    // Emit a new value every 30 seconds
     this.subscription = timer(0, 30000).pipe(
       switchMap(() => this.getLatestSensorReading(deviceId)),
       takeUntil(this.stopPolling$)
     ).subscribe(
-      (data: SensorReadingModel) => {
+      (data: SensorReadingDTO) => {
         console.log('Latest Sensor Reading:', data);
       },
       error => {

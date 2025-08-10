@@ -1,38 +1,52 @@
-<button (click)="loadSensorData()">get</button>
+<div *ngIf="deviceReadingsTable.length > 1" class="sensor-table">
+  <table>
+    <thead>
+    <tr>
+      <th class="w-10">Nr</th>
+      <ng-container *ngFor="let column of displayedColumns">
+        <th>{{ FormatKeyToTitle(column.label) }}</th>
+      </ng-container>
+      <th class="w-10 ws-nowrap">Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of deviceReadingsTable; let i = index">
+      <td>{{ (i + 1) + (currentPage - 1) * pageSize }}</td>
+      <ng-container *ngFor="let column of displayedColumns">
+        <td>{{ data[column.key] }}</td>
+      </ng-container>
+      <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
+    </tr>
+    </tbody>
+  </table>
 
-<h3>{{ timeRange.from }} | {{ timeRange.to }} | {{ deviceId }}</h3>
+  <div *ngIf="!isLoading && deviceReadingsTable.length === 0" class="no-data">
+    No data available.
+  </div>
 
-<div *ngIf="isLoading" class="loading">Loading...</div>
-
-<table>
-  <thead>
-  <tr>
-    <th class="w-10">Nr</th>
-    <ng-container *ngFor="let column of displayedColumns">
-      <th>{{ column.label }}</th>
-    </ng-container>
-    <th class="w-10 ws-nowrap">Date</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let data of deviceReadings; let i = index">
-    <td>{{ i + 1 }}</td>
-    <ng-container *ngFor="let column of displayedColumns">
-      <td>{{ data[column.key] }}</td>
-    </ng-container>
-    <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm' }}</td>
-  </tr>
-  </tbody>
-</table>
-
-<div *ngIf="!isLoading && deviceReadings.length === 0" class="no-data">
-  No data available.
-</div>
-
-<!-- Pagination Controls -->
-<div class="pagination-controls" *ngIf="!isLoading">
-  <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
-  <span>Page {{ currentPage }}</span>
-  <button (click)="onPageChange(currentPage + 1)" [disabled]="deviceReadings.length < pageSize">Next</button>
+  <!-- Pagination Controls -->
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+    <app-button
+      [style]="'outline-accent'"
+      [size]="'small'"
+      (click)="onPageChange(1)"
+      [disabled]="currentPage === 1"><<</app-button>
+    <app-button
+      [style]="'outline-accent'"
+      [size]="'small'"
+      (click)="onPageChange(currentPage - 1)"
+      [disabled]="currentPage === 1"><</app-button>
+    <span>{{ currentPage }}-{{ totalPages }}</span>
+    <app-button
+      [style]="'outline-accent'"
+      [size]="'small'"
+      (click)="onPageChange(currentPage + 1)"
+      [disabled]="deviceReadingsTable.length < pageSize">></app-button>
+    <app-button
+      [style]="'outline-accent'"
+      [size]="'small'"
+      (click)="onPageChange(totalPages)"
+      [disabled]="deviceReadingsTable.length < pageSize">>></app-button>
+  </div>
 </div>
 

@@ -1,12 +1,19 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {SensorDataService} from "../../../services/sensor-data.service";
-import {SensorReadingModel} from "../../../models/SensorReadingModel";
 import {interval, Subscription} from "rxjs";
 import {startWith, switchMap} from "rxjs/operators";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DeviceService} from "../../../services/device.service";
-import {Thresholds} from "../../../models/Thresholds";
 import {DeviceModel} from "../../../models/DeviceModel";
+import {SensorReadingDTO} from "../../../models/DTO/SensorReadingDTO";
+import {ThresholdsModel} from "../../../models/Thresholds";
+
+interface SensorReadingDisplay {
+  id: number;
+  label: string;
+  value: string | null;
+  state: 'safe' | 'warning' | 'critical'
+}
 
 @Component({
   selector: 'app-sensor-latest-reading',
@@ -15,11 +22,16 @@ import {DeviceModel} from "../../../models/DeviceModel";
 })
 export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChanges {
   @Input() deviceId: string | null = null;
-  sensorReadings: { id: number; label: string; value: string | null; state: 'safe' | 'warning' | 'critical' }[] = [];
-  private pollingSubscription: Subscription | undefined;
+
+  sensorReadings: SensorReadingDisplay[] = [];
+  dataLength: number | null = null;
   devices: DeviceModel[] = [];
-  thresholds!: any;
+  thresholds: ThresholdsModel | null = null;
   order: number[] = [];
+
+  private pollingSubscription?: Subscription;
+  private readonly POLLING_INTERVAL = 30000;
+  private readonly DEFAULT_ORDER = [1,2,3,4,5,6,7,8];
 
   constructor(
     private sensorDataService: SensorDataService,
@@ -28,101 +40,85 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
   ) { }
 
   ngOnInit(): void {
-    this.fetchDataForDevice();
+    this.initializeData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['deviceId'] && this.deviceId) {
+      this.stopPolling();
+      this.initializeData();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private initializeData(): void {
+    if (!this.deviceId) {
+      this.resetData();
+      return;
+    }
+
     this.fetchThresholds();
+    this.getOrder();
+    this.startPolling();
   }
 
-  private fetchThresholds(): void {
-    if (!this.deviceId) {
-      this.thresholds = null; // Reset thresholds when switching devices
-      return;
-    }
-
-    this.deviceService.getThresholdByDeviceId(this.deviceId).subscribe({
-      next: (thresholds) => {
-        this.thresholds = thresholds;
-        //this.updateSensorReadings(this.sensorReadings); // Update readings with thresholds
-      },
-      error: (err) => console.error('Error fetching thresholds:', err),
-    });
-  }
-
-  private fetchDataForDevice(): void {
-    if (!this.deviceId) {
-      this.sensorReadings = [];
-      this.order = [];
-      return;
-    }
-
+  private resetData(): void {
     this.sensorReadings = [];
     this.order = [];
-    this.getOrder();
+    this.thresholds = null;
+  }
 
-    this.pollingSubscription = interval(30000)
+  private startPolling(): void {
+    if (!this.deviceId) return;
+
+    this.pollingSubscription = interval(this.POLLING_INTERVAL)
       .pipe(
         startWith(0),
         switchMap(() => this.sensorDataService.getLatestSensorReading(this.deviceId))
       )
       .subscribe({
-        next: (reading) => {
-          this.updateSensorReadings(reading);
+        next: (res) => {
+          this.updateSensorReadings(res);
           this.cdr.detectChanges();
         },
         error: (err) => {
-          console.error('Error fetching latest sensor reading:', err);
+          console.error('Error while fetching sensor data.', err);
           this.sensorReadings = [];
         }
-      });
+      })
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['deviceId'] && this.deviceId) {
-      if (this.pollingSubscription) {
-        this.pollingSubscription.unsubscribe();
-      }
-      this.fetchDataForDevice();
-      this.fetchThresholds();
-    }
+  private stopPolling(): void {
+    this.pollingSubscription?.unsubscribe();
   }
 
-  ngOnDestroy(): void {
-    if (this.pollingSubscription) {
-      this.pollingSubscription.unsubscribe();
-    }
+  private fetchThresholds(): void {
+    if (!this.deviceId) return;
+
+    this.deviceService.getThresholdByDeviceId(this.deviceId).subscribe({
+      next: (thresholds) => (this.thresholds = thresholds),
+      error: (err) => console.error('Error fetching thresholds:', err),
+    });
   }
 
-  private updateSensorReadings(reading: SensorReadingModel): void {
-    this.sensorReadings = [
-      { id: 1, label: 'Temperature', value: reading.temperature !== null ? `${this.twoDecimal(reading.temperature)}°C` : null, state: this.getState('temperature', reading.temperature) },
-      { id: 2, label: 'Humidity', value: reading.humidity !== null ? `${this.twoDecimal(reading.humidity)}%` : null, state: this.getState('humidity', reading.humidity) },
-      { id: 3, label: 'Pressure', value: reading.pressure !== null ? `${reading.pressure} hPa` : null, state: this.getState('pressure', reading.pressure) },
-      { id: 4, label: 'MQ-2', value: reading.mqTwo !== null ? `${reading.mqTwo} ppm` : null, state: this.getState('mqTwo', reading.mqTwo) },
-      { id: 5, label: 'VOC', value: reading.gasResistance !== null ? `${this.twoDecimal(reading.gasResistance)} IAQ` : null, state: this.getState('gasResistance', reading.gasResistance) },
-      { id: 6, label: 'PM 1', value: reading.pm1 !== null ? `${reading.pm1} µg/m³` : null, state: this.getState('pm1', reading.pm1) },
-      { id: 7, label: 'PM 2.5', value: reading.pm25 !== null ? `${reading.pm25} µg/m³` : null, state: this.getState('pm25', reading.pm25) },
-      { id: 8, label: 'PM 10', value: reading.pm10 !== null ? `${reading.pm10} µg/m³` : null, state: this.getState('pm10', reading.pm10) },
-    ];
+  private getOrder() {
+    const deviceId = this.deviceService.currentDeviceId;
 
-    this.applyOrderToReadings(this.order);
-  }
-
-  private getState(type: string, value: number | null): 'safe' | 'warning' | 'critical' {
-    if (value === null || !this.thresholds) return 'safe';
-
-    const min = this.thresholds[`${type}Min`];
-    const max = this.thresholds[`${type}Max`];
-    const minCritical = this.thresholds[`${type}MinCritical`];
-    const maxCritical = this.thresholds[`${type}MaxCritical`];
-
-    console.log(type,' min: ', min,' max: ', max,' minCritical: ', minCritical,' maxCritical: ', maxCritical);
-
-    if (minCritical !== null && value <= minCritical || maxCritical !== null && value >= maxCritical) {
-      return 'critical';
+    if (!deviceId) {
+      console.error('Device ID is null or undefined.');
+      return;
     }
-    if (min !== null && value <= min || max !== null && value >= max) {
-      return 'warning';
-    }
-    return 'safe';
+
+    this.deviceService.getSensorOrder(deviceId).subscribe({
+      next: (order) => {
+        this.order = order.length ? order : this.DEFAULT_ORDER;
+        if (!order.length) this.saveOrder(this.order);
+      },
+      error: (error) => console.error('Error retrieving order:', error)
+    });
   }
 
   saveOrder(order: number[]) {
@@ -135,44 +131,55 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
     });
   }
 
-  getOrder() {
-    const deviceId = this.deviceService.currentDeviceId;
+  private updateSensorReadings(reading: SensorReadingDTO): void {
+    this.dataLength = Object.keys(reading.sensorData).length;
+    const data = reading.sensorData;
+    const readings = Object.entries(data).map(([key, value], index) => ({
+      id: index + 1,
+      label: this.formatedLabel(key),
+      value: value != null ? this.formatValue(key, value) : null,
+      state: this.getState(key, value)
+    }));
 
-    if (!deviceId) {
-      console.error('Device ID is null or undefined.');
-      return;
-    }
-
-    this.deviceService.getSensorOrder(deviceId).subscribe({
-      next: (order) => {
-        console.log('Order retrieved:', order);
-        if (order.length == 0) {
-          this.order = [1,2,3,4,5,6,7,8];
-          this.saveOrder(this.order);
-          return;
-        }
-        this.order = order;
-      },
-      error: (error) => {
-        console.error('Error retrieving order:', error);
-      }
-    });
+    this.sensorReadings = this.applyOrderToReadings(readings, this.order);
   }
 
-  private applyOrderToReadings(order: number[]) {
-    if (!this.sensorReadings.length) {
-      console.warn('Sensor readings are empty. Cannot apply order.');
-      return;
+  private applyOrderToReadings(readings: SensorReadingDisplay[], order: number[]): SensorReadingDisplay[] {
+    const map = new Map(readings.map(reading => [reading.id, reading]));
+    return order.map((id) => map.get(id)).filter((r): r is SensorReadingDisplay => !!r);
+  }
+
+  private getState(type: string, value: number | null): 'safe' | 'warning' | 'critical' {
+    if (value === null || !this.thresholds) return 'safe';
+
+    const sensorThreshold = this.thresholds.sensorThresholds[type];
+    if (!sensorThreshold) return 'safe';
+
+    const { min, max, minCritical, maxCritical } = sensorThreshold;
+
+    if ((minCritical != null && value <= minCritical) ||
+        (maxCritical != null && value >= maxCritical)) {
+      return 'critical';
     }
+    if ((min != null && value <= min) ||
+        (max != null && value >= max)) {
+      return 'warning';
+    }
+    return 'safe';
+  }
 
-    const readingMap = new Map(this.sensorReadings
-      .map((reading) => [reading.id, reading]));
+  private formatedLabel(key: string): string {
+    return key.replace(/([a-z])([A-Z])/g, '$1 $2');
+  }
 
-    this.sensorReadings = order
-      .map((id) => readingMap.get(id))
-      .filter((reading) => reading !== undefined) as { id: number; label: string; value: string | null; state: 'safe' | 'warning' | 'critical' }[];
-
-    console.log('Reordered sensorReadings:', this.sensorReadings);
+  private formatValue(key: string, value: number): string {
+    const num = value.toFixed(2);
+    switch (key.toLowerCase()) {
+      case 'temperature': return `${num}°C`;
+      case 'humidity': return `${num}%`;
+      case 'pressure': return `${num}hPa`;
+      default: return num;
+    }
   }
 
   drop(event: CdkDragDrop<{ label: string; value: string }[]>) {
@@ -180,9 +187,5 @@ export class SensorLatestReadingComponent implements OnInit, OnDestroy, OnChange
 
     const newOrder = this.sensorReadings.map(item => item.id);
     this.saveOrder(newOrder);
-  }
-
-  twoDecimal(num: number): string {
-    return (parseFloat(String(num)).toFixed(2))
   }
 }

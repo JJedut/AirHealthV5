@@ -1,4 +1,5 @@
-﻿using AirHealthV5.Server.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using AirHealthV5.Server.Domain.Models;
 using AirHealthV5.Server.Infrastructure.Services;
 using AirHealthV5.Server.Interfaces.Repository;
 using MediatR;
@@ -7,8 +8,13 @@ namespace AirHealthV5.Server.Application.Commands.DeviceCommands;
 
 public class AddDeviceCommand : IRequest<bool>
 {
+    [Required]
     public string DeviceName { get; set; } = string.Empty;
+    
+    [Required]
     public string ApiKey { get; set; } = string.Empty;
+    
+    [Required]
     public Guid UserId { get; set; }
 }
 
@@ -27,10 +33,7 @@ public class AddDeviceCommandHandler : IRequestHandler<AddDeviceCommand, bool>
     {
         var existingApiKey = await _apiKeyService.ValidateApiKey(request.ApiKey);
         
-        if (!existingApiKey)
-        {
-            return false;
-        }
+        if (!existingApiKey) return false;
         
         var device = new DeviceModel
         {

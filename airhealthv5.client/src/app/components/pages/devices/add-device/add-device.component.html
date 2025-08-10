@@ -1,25 +1,5 @@
 <div class="add-device-container">
   <h1>Add Device</h1>
-  <a href="https://www.git.example.com" target="_blank" rel="noopener noreferrer">
-    View Example Microcontroller Code on GitHub
-  </a>
-  <div>
-    <h2>Example JSON Payload</h2>
-  <pre class="code">
-    <code>
-&#123;
-  <span class="pink">"ApiKey"</span>: <span class="green">"apiKey"</span>,
-  <span class="pink">"MqTwo"</span>: <span class="blue">number</span>,
-  <span class="pink">"Temperature"</span>: <span class="blue">number</span>,
-  <span class="pink">"Humidity"</span>: <span class="blue">number</span>,
-  <span class="pink">"Pressure"</span>: <span class="blue">number</span>,
-  <span class="pink">"GasResistance"</span>: <span class="blue">number</span>,
-  <span class="pink">"Pm1"</span>: <span class="blue">number</span>,
-  <span class="pink">"Pm25"</span>: <span class="blue">number</span>,
-  <span class="pink">"Pm10"</span>: <span class="blue">number</span>
-&#125;</code>
-  </pre>
-  </div>
   <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()">
     <div class="lab-put">
       <label for="deviceName">Device Name:</label>
@@ -44,5 +24,155 @@
       <app-button [type]="'submit'" [style]="'accent'" [disabled]="deviceForm.invalid">Add Device</app-button>
     </div>
   </form>
+
+  <div class="mt-1">
+    <h3>Send the data to one of the following endpoints:</h3>
+    <h4>- https://placeholder/api/SensorData</h4>
+    <h4>- http://placeholder/api/SensorData</h4>
+  </div>
+
+  <div class="mt-1">
+    <h3>Example JSON Payload</h3>
+  <pre class="code">
+    <code>
+&#123;
+  <span class="pink">"ApiKey"</span>: <span class="green">"apiKey"</span>,//<span class="italic">(required)</span>
+  <span class="pink">"&lt;SensorName&gt;"</span>: <span class="blue">number</span>,
+  <span class="pink">...</span>
+&#125;</code>
+  </pre>
+  </div>
+
+  <div class="mt-1 mb-1">
+    <h3>Example microcontroller code</h3>
+    <pre class="code">
+    <code>
+&#35;include <span class="orange">WiFi.h</span>
+&#35;include <span class="orange">HTTPClient.h</span>
+&#35;include <span class="orange">Wire.h</span>
+&#35;include <span class="orange">Adafruit_Sensor.h</span>
+&#35;include <span class="orange">Adafruit_BME680.h</span>
+&#35;include <span class="orange">SoftwareSerial.h</span>
+&#35;include <span class="orange">PMS.h</span>
+
+// <span class="gray">WiFi credentials</span>
+<span class="blue">const char*</span> <span class="pink">ssid</span> = <span class="green">"nowogrodNET-87ff83"</span>;
+<span class="blue">const char*</span> <span class="pink">password</span> = <span class="green">"Y36LHYLH3P"</span>;
+<span class="blue">const char*</span> <span class="pink">apiKey</span> = <span class="green">"2cdf1d381fb645c5aa62acf94df8b23a"</span>;
+
+// <span class="gray">Server endpoint</span>
+<span class="blue">const char*</span> <span class="pink">serverUrl</span> = <span class="green">"https://192.168.33.107:7096/api/SensorData"</span>;
+
+// <span class="gray">Initialize BME680</span>
+<span class="orange">Adafruit_BME680</span> <span class="pink">bme</span>; <span class="gray">// I2C</span>
+
+// <span class="gray">MQ-2 connected to A0 pin</span>
+<span class="blue">const int</span> <span class="pink">mq2Pin</span> = <span class="blue">A0</span>;
+
+// <span class="gray">PMS5003 pins and initialization</span>
+&#35;define <span class="pink">PMS_RX_PIN</span> <span class="blue">2</span> <span class="gray">// Connect to PMS5003 TX</span>
+&#35;define <span class="pink">PMS_TX_PIN</span> <span class="blue">3</span> <span class="gray">// Connect to PMS5003 RX</span>
+<span class="orange">SoftwareSerial</span> <span class="pink">pmsSerial</span>(<span class="pink">PMS_RX_PIN</span>, <span class="pink">PMS_TX_PIN</span>);
+<span class="orange">PMS</span> <span class="pink">pms</span>(<span class="pink">pmsSerial</span>);
+<span class="orange">PMS::DATA</span> <span class="pink">pmsData</span>;
+
+<span class="blue">void</span> <span class="green">setup</span>() &#123;
+  <span class="pink">Serial.begin</span>(<span class="blue">115200</span>);
+
+  <span class="gray">// Connect to WiFi</span>
+  <span class="pink">Serial.print</span>(<span class="green">"Connecting to WiFi"</span>);
+  <span class="pink">WiFi.begin</span>(<span class="pink">ssid</span>, <span class="pink">password</span>);
+  <span class="blue">while</span> (<span class="pink">WiFi.status</span>() != <span class="blue">WL_CONNECTED</span>) &#123;
+    <span class="pink">delay</span>(<span class="blue">1000</span>);
+    <span class="pink">Serial.print</span>(<span class="green">"."</span>);
+  &#125;
+  <span class="pink">Serial.println</span>(<span class="green">"Connected to WiFi"</span>);
+
+  <span class="gray">// Initialize BME680</span>
+  <span class="blue">if</span> (!<span class="pink">bme.begin</span>()) &#123;
+    <span class="pink">Serial.println</span>(<span class="green">"Could not find a valid BME680 sensor, check wiring!"</span>);
+    <span class="blue">while</span> (<span class="blue">1</span>);
+  &#125;
+
+  <span class="gray">// BME680 settings</span>
+  <span class="pink">bme.setTemperatureOversampling</span>(<span class="pink">BME680_OS_8X</span>);
+  <span class="pink">bme.setHumidityOversampling</span>(<span class="pink">BME680_OS_2X</span>);
+  <span class="pink">bme.setPressureOversampling</span>(<span class="pink">BME680_OS_4X</span>);
+  <span class="pink">bme.setIIRFilterSize</span>(<span class="pink">BME680_FILTER_SIZE_3</span>);
+  <span class="pink">bme.setGasHeater</span>(<span class="blue">320</span>, <span class="blue">150</span>);
+
+  <span class="gray">// Initialize PMS5003</span>
+  <span class="pink">pmsSerial.begin</span>(<span class="blue">9600</span>);
+  <span class="pink">pms.passiveMode</span>();
+&#125;
+
+<span class="blue">void</span> <span class="green">loop</span>() &#123;
+  <span class="gray">// Read BME680 data</span>
+  <span class="blue">float</span> <span class="pink">temperature</span> = <span class="blue">0</span>, <span class="pink">humidity</span> = <span class="blue">0</span>, <span class="pink">pressure</span> = <span class="blue">0</span>, <span class="pink">gasResistance</span> = <span class="blue">0</span>;
+  <span class="blue">if</span> (<span class="pink">bme.performReading</span>()) &#123;
+    <span class="pink">temperature</span> = <span class="pink">bme.temperature</span>;
+    <span class="pink">humidity</span> = <span class="pink">bme.humidity</span>;
+    <span class="pink">pressure</span> = <span class="pink">bme.pressure</span> / <span class="blue">100.0</span>;
+    <span class="pink">gasResistance</span> = <span class="pink">bme.gas_resistance</span> / <span class="blue">1000.0</span>;
+  &#125;
+
+  <span class="gray">// Read MQ-2 data</span>
+  <span class="blue">int</span> <span class="pink">mq2Value</span> = <span class="pink">analogRead</span>(<span class="pink">mq2Pin</span>);
+
+  <span class="gray">// Read PMS5003 data</span>
+  <span class="blue">int</span> <span class="pink">pm1_0</span> = <span class="blue">0</span>, <span class="pink">pm2_5</span> = <span class="blue">0</span>, <span class="pink">pm10</span> = <span class="blue">0</span>;
+  <span class="pink">pms.wakeUp</span>();
+  <span class="pink">delay</span>(<span class="blue">3000</span>);
+  <span class="pink">pms.requestRead</span>();
+  <span class="blue">if</span> (<span class="pink">pms.readUntil</span>(<span class="pink">pmsData</span>)) &#123;
+    <span class="pink">pm1_0</span> = <span class="pink">pmsData.PM_AE_UG_1_0</span>;
+    <span class="pink">pm2_5</span> = <span class="pink">pmsData.PM_AE_UG_2_5</span>;
+    <span class="pink">pm10</span> = <span class="pink">pmsData.PM_AE_UG_10_0</span>;
+  &#125;
+  <span class="pink">pms.sleep</span>();
+
+  <span class="gray">// Prepare JSON payload</span>
+  <span class="orange">String</span> <span class="pink">payload</span> = <span class="green">"&#123;</span>";
+  <span class="pink">payload</span> += <span class="green">"\\"ApiKey\\":\\"" </span> + <span class="pink">String</span>(<span class="pink">apiKey</span>) + <span class="green">"\\","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"Temperature\\":"</span> + <span class="pink">String</span>(<span class="pink">temperature</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"Humidity\\":"</span> + <span class="pink">String</span>(<span class="pink">humidity</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"Pressure\\":"</span> + <span class="pink">String</span>(<span class="pink">pressure</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"GasResistance\\":"</span> + <span class="pink">String</span>(<span class="pink">gasResistance</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"MQ2Value\\":"</span> + <span class="pink">String</span>(<span class="pink">mq2Value</span>) + <span class="green">","</span>; <span class="gray">// Added MQ-2 value</span>
+  <span class="pink">payload</span> += <span class="green">"\\"PM1.0\\":"</span> + <span class="pink">String</span>(<span class="pink">pm1_0</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"PM2.5\\":"</span> + <span class="pink">String</span>(<span class="pink">pm2_5</span>) + <span class="green">","</span>;
+  <span class="pink">payload</span> += <span class="green">"\\"PM10\\":"</span> + <span class="pink">String</span>(<span class="pink">pm10</span>);
+  <span class="pink">payload</span> += <span class="green">"&#125;"</span>;
+
+  <span class="gray">// Send the data</span>
+  <span class="blue">if</span> (<span class="pink">WiFi.status</span>() == <span class="blue">WL_CONNECTED</span>) &#123;
+    <span class="orange">HTTPClient</span> <span class="pink">http</span>;
+    <span class="pink">http.begin</span>(<span class="pink">serverUrl</span>);
+    <span class="pink">http.addHeader</span>(<span class="green">"Content-Type"</span>, <span class="green">"application/json"</span>);
+
+    <span class="blue">int</span> <span class="pink">httpResponseCode</span> = <span class="pink">http.POST</span>(<span class="pink">payload</span>);
+
+    <span class="blue">if</span> (<span class="pink">httpResponseCode</span> > <span class="blue">0</span>) &#123;
+      <span class="orange">String</span> <span class="pink">response</span> = <span class="pink">http.getString</span>();
+      <span class="pink">Serial.print</span>(<span class="green">"Response code: "</span>);
+      <span class="pink">Serial.println</span>(<span class="pink">httpResponseCode</span>);
+      <span class="pink">Serial.print</span>(<span class="green">"Response: "</span>);
+      <span class="pink">Serial.println</span>(<span class="pink">response</span>);
+    &#125; <span class="blue">else</span> &#123;
+      <span class="pink">Serial.print</span>(<span class="green">"Error in sending POST: "</span>);
+      <span class="pink">Serial.println</span>(<span class="pink">httpResponseCode</span>);
+    &#125;
+
+    <span class="pink">http.end</span>(); <span class="gray">// Close connection</span>
+  &#125; <span class="blue">else</span> &#123;
+    <span class="pink">Serial.println</span>(<span class="green">"WiFi Disconnected"</span>);
+  &#125;
+
+  <span class="pink">delay</span>(<span class="blue">30000</span>); <span class="gray">// Send data every 30 seconds</span>
+&#125;
+    </code>
+  </pre>
+  </div>
+
 </div>
 

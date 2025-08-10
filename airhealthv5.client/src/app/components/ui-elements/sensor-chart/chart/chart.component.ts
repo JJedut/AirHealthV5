@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import {ChartData} from "../../../../models/DTO/chartData";
+import {FormatKeyToTitle} from "../../../../utils/FormatKeyToTitle";
 
 @Component({
   selector: 'app-chart',
@@ -35,19 +36,17 @@ export class ChartComponent implements OnInit {
   }
 
   protected readonly dateStringify = (x: number): string => {
-    // Reverse normalization by converting seconds back to milliseconds
     const transformedValue = x * 1000;
 
-    // Add the `fromDateNum` to get the original timestamp
     const date = new Date(this.fromDateNum.getTime() + transformedValue);
 
-    // Format the date as `hh:mm dd.MM.yyyy`
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
 
     return `${hours}:${minutes} ${day}.${month}.${year}`;
   };
+  protected readonly FormatKeyToTitle = FormatKeyToTitle;
 }

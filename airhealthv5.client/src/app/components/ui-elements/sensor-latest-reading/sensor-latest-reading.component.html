@@ -2,7 +2,7 @@
   <div *ngIf="sensorReadings.length === 0">
     <h1 class="no-data">No sensor readings available</h1>
   </div>
-  @for (reading of sensorReadings; track reading) {
+  @for (reading of sensorReadings; track reading.id) {
     <div *ngIf="reading.value != null" class="box" cdkDrag
          [ngClass]="{
          'safe': reading.state === 'safe',
@@ -11,7 +11,6 @@
        }">
       <h3>{{ reading.label }}</h3>
       <h1>{{ reading.value }}</h1>
-      <h3 *ngIf="reading.state != 'safe'">{{reading.state}}</h3>
     </div>
   }
 </div>

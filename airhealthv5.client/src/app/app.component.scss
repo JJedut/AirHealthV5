@@ -4,3 +4,13 @@
   display: flex;
   justify-content: center;
 }
+
+@media (max-width: 1268px) {
+  .content-container {
+    max-width: none !important;
+    margin: 0 0.5rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+

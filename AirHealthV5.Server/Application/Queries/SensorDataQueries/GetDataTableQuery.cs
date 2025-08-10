@@ -1,5 +1,6 @@
 ﻿using AirHealthV5.Server.Domain.Models;
 using AirHealthV5.Server.Domain.Models.DTO;
+using AirHealthV5.Server.Helpers;
 using AirHealthV5.Server.Interfaces.Repository;
 using MediatR;
 
@@ -40,7 +41,9 @@ public class GetDataTableQueryHandler : IRequestHandler<GetDataTableQuery, Pagin
         int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
         var data = await _deviceReadingRepository.GetSensorTableData(query, cancellationToken);
+
+        var dataDTo = data.Select(e => e.ToDto()).ToList();
         
-        return new PaginatedData(data, totalPages);
+        return new PaginatedData(dataDTo, totalPages);
     }
 }

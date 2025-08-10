@@ -6,8 +6,6 @@
       <tr>
         <th>Name</th>
         <th>API Key</th>
-        <th>Is Active</th>
-        <th>Last Update</th>
         <th>Created Date</th>
         <th></th>
       </tr>
@@ -16,8 +14,6 @@
       <tr *ngFor="let device of devices">
         <td>{{ device.deviceName }}</td>
         <td>...{{ device.apiKey.slice(-4) }}</td>
-        <td>{{ device.isActive }}</td>
-        <td>{{ device.lastUpdate | date: 'dd.MM.yyyy HH:mm' : 'local' }}</td>
         <td>{{ device.created | date: 'dd.MM.yyyy HH:mm' : 'local' }}</td>
         <td (click)="deleteDevice(device.deviceId)" class="centered delete">
             <span class="material-symbols-outlined">

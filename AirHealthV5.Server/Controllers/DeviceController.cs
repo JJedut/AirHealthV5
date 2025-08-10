@@ -30,8 +30,25 @@ public class DeviceController : ControllerBase
     [HttpGet("GetDevicesByUserId")]
     public async Task<IActionResult> GetDevicesByUserId([FromQuery] GetDevicesByUserIdQuery request)
     {
-        var devices = await _mediator.Send(request);
-        return Ok(devices);
+        try
+        {
+            var devices = await _mediator.Send(request);
+        
+            if (devices == null || !devices.Any())
+            {
+                return NotFound("No devices found for the given user ID.");
+            }
+        
+            return Ok(devices);
+        }
+        catch (ArgumentNullException ex)
+        {
+            return BadRequest($"Invalid request: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 
     [HttpGet("GetDeviceById")]

@@ -6,7 +6,7 @@ namespace AirHealthV5.Server.Interfaces.Repository;
 
 public interface IDeviceReadingRepository
 {
-    public Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataQuery query,
+    public Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataChartQuery chartQuery,
         CancellationToken cancellationToken);
     public Task<string> SaveSensorReadingAsync(DeviceReadingModel sensorReading,
         CancellationToken cancellationToken);

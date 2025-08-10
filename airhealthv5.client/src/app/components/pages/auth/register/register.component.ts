@@ -30,13 +30,12 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe(
         (response) => {
-          console.log('Backend response:', response);  // Inspect the response
           this.successMessage = response?.message || 'Registration successful!';
-          this.errorMessage = '';  // Clear any error messages
+          this.errorMessage = '';
         },
         (error) => {
           console.log('Error during registration:', error);
-          this.successMessage = '';  // Clear success message
+          this.successMessage = '';
 
           if (error.status === 409) {
             this.errorMessage = 'Username already exists.';
@@ -48,7 +47,7 @@ export class RegisterComponent {
         }
       );
     } else {
-      this.successMessage = '';  // Clear success message
+      this.successMessage = '';
       this.errorMessage = 'Form is invalid. Please check your inputs.';
     }
   }

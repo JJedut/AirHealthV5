@@ -1,4 +1,4 @@
-import {Thresholds} from "./Thresholds";
+import {ThresholdsModel} from "./Thresholds";
 
 export interface DeviceModel {
   id: number;
@@ -10,6 +10,5 @@ export interface DeviceModel {
   lastUpdate: Date;
   created: Date;
   sensorOrder: number[];
-  thresholds: Thresholds;
-  thresholdsCritical: Thresholds;
+  thresholds: ThresholdsModel | null;
 }

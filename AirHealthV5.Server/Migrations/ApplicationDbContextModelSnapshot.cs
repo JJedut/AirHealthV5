@@ -112,29 +112,9 @@ namespace AirHealthV5.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("GasResistance")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Humidity")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("MqTwo")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Pm1")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Pm10")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Pm25")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Pressure")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Temperature")
-                        .HasColumnType("real");
+                    b.Property<string>("SensorDataJson")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("SensorData");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
@@ -188,101 +168,10 @@ namespace AirHealthV5.Server.Migrations
                             b1.Property<int>("DeviceModelId")
                                 .HasColumnType("int");
 
-                            b1.Property<int?>("GasResistanceMax")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("GasResistanceMaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("GasResistanceMin")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("GasResistanceMinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("HumidityMax")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("HumidityMaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("HumidityMin")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("HumidityMinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("MqTwoMax")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("MqTwoMaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("MqTwoMin")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("MqTwoMinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm10Max")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm10MaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm10Min")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm10MinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm1Max")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm1MaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm1Min")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm1MinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm25Max")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm25MaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm25Min")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("Pm25MinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("PressureMax")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("PressureMaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("PressureMin")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("PressureMinCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("TemperatureMax")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("TemperatureMaxCritical")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("TemperatureMin")
-                                .HasColumnType("int");
-
-                            b1.Property<int?>("TemperatureMinCritical")
-                                .HasColumnType("int");
+                            b1.Property<string>("SensorThresholds")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("SensorThresholdsJson");
 
                             b1.HasKey("DeviceModelId");
 

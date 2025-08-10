@@ -15,11 +15,11 @@ public class DeviceReadingRepository : IDeviceReadingRepository
         _context = context;
     }
 
-    public async Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataQuery query,
+    public async Task<List<DeviceReadingModel>> GetSensorReadingsAsync(SensorDataChartQuery chartQuery,
         CancellationToken cancellationToken)
     {
         return await _context.DeviceReadings
-            .Where(sr => sr.Timestamp >= query.From && sr.Timestamp <= query.To && sr.DeviceId == query.DeviceId.ToString())
+            .Where(sr => sr.Timestamp >= chartQuery.From && sr.Timestamp <= chartQuery.To && sr.DeviceId == chartQuery.DeviceId.ToString())
             .OrderBy(sr => sr.Timestamp)
             .ToListAsync(cancellationToken);
     }

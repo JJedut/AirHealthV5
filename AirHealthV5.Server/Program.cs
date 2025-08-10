@@ -14,17 +14,16 @@ var config = builder.Configuration;
 var services = builder.Services;
 
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(); // Ensure Console Logger is Added
+builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// Add services to the container.
 services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
         policy.WithOrigins(
                 "http://localhost:4200", 
-                "https://192.168.33.102:7096", 
+                "https://192.168.33.105:7096", 
                 "https://127.0.0.1:4200"
                 )
             .AllowAnyHeader()
@@ -81,7 +80,6 @@ app.UseStaticFiles();
 
 //app.UseMiddleware<ApiKeyMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -9,7 +9,6 @@ export class CensorKeyPipe implements PipeTransform {
       return '';
     }
 
-    // Replace all but the last 4 characters with '*'
     const censored = '*'.repeat(value.length - 4) + value.slice(-4);
     return censored;
   }

@@ -1,6 +1,7 @@
 import {SensorReadingModel} from "../SensorReadingModel";
+import {SensorReadingDTO} from "./SensorReadingDTO";
 
 export interface PaginatedData {
-  data: SensorReadingModel[];
+  data: SensorReadingDTO[];
   totalPages: number;
 }

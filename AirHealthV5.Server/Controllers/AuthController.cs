@@ -32,10 +32,8 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command)
     {
-        // Process the registration command
         await _mediator.Send(command);
 
-        // Return a JSON response with a success message and status
         return CreatedAtAction(nameof(Register), new { message = "Registration successful!" });
     }
 

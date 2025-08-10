@@ -1,5 +1,6 @@
 ﻿using AirHealthV5.Server.Application.Queries.SensorDataQueries;
 using AirHealthV5.Server.Domain.Models;
+using AirHealthV5.Server.Domain.Models.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,10 +42,10 @@ public class SensorDataController : ControllerBase
         }
     }
     
-    [HttpGet("GetSensorData")]
-    public async Task<ActionResult<IEnumerable<IEnumerable<DeviceReadingModel>>>> GetSensorData([FromQuery] SensorDataQuery query)
+    [HttpGet("GetSensorDataChart")]
+    public async Task<ActionResult<ChartDataFormatModel>> GetSensorDataChart([FromQuery] SensorDataChartQuery chartQuery)
     {
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(chartQuery);
         return Ok(response);
     }
     
@@ -56,7 +57,7 @@ public class SensorDataController : ControllerBase
     }
     
     [HttpGet("GetLatestSensorReading")]
-    public async Task<ActionResult<DeviceReadingModel>> GetLatestSensorReading([FromQuery] GetLatestReadingQuery query)
+    public async Task<ActionResult<DeviceReadingDto>> GetLatestSensorReading([FromQuery] GetLatestReadingQuery query)
     {
         var response = await _mediator.Send(query);
         return Ok(response);

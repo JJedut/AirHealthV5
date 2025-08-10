@@ -33,7 +33,7 @@
     column-gap: 0.25rem;
     background-color: var(--green);
     border: 2px solid var(--black-1);
-    box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 100px;
+    //box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 100px;
   }
 
   ::ng-deep app-button {
@@ -55,7 +55,7 @@
     height: 2.5rem;
     border-radius: 1.5rem;
     background: var(--green);
-    box-shadow: rgba(96, 211, 148, 0.75) 0px 0px 50px;
+    //box-shadow: rgba(96, 211, 148, 0.75) 0px 0px 50px;
     color: var(--black);
     font-size: 3.2rem;
     font-weight: 700;
@@ -73,8 +73,8 @@
     flex-direction: column;
     row-gap: 0.25rem;
     background-color: var(--green);
-    box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 50px;
-    //box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    //box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 50px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     padding: 0.25rem;
     min-width: 150px;
@@ -110,5 +110,101 @@
 
   .active {
     color: #fff;
+  }
+}
+
+@media (max-width: 1268px) {
+  .mobile {
+    display: none !important;
+  }
+  .header {
+    justify-content: space-evenly;
+
+    .devices-list-container {
+      display: flex;
+      flex-direction: row;
+      max-width: 130vh;
+      column-gap: 0.25rem;
+      overflow: auto;
+    }
+  }
+  .empty-space {
+    width: 0 !important;
+  }
+  .devices {
+    width: auto;
+    display: flex;
+    justify-content: center;
+
+    .device-list {
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+      display: inline-flex;
+      column-gap: 0.25rem;
+      background-color: var(--green);
+      border: 2px solid var(--black-1);
+      //box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 100px;
+    }
+
+    ::ng-deep app-button {
+      button {
+        width: auto !important;
+        white-space: nowrap !important;
+      }
+    }
+  }
+
+  .profile {
+    //width: 20%;
+    display: flex;
+    position: relative;
+    justify-content: end;
+
+    .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 1.5rem;
+      background: var(--green);
+      //box-shadow: rgba(96, 211, 148, 0.75) 0px 0px 50px;
+      color: var(--black);
+      font-size: 3.2rem;
+      font-weight: 700;
+      font-style: italic;
+      margin: 0 0.5rem;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: revert !important;
+      display: flex;
+      flex-direction: column;
+      row-gap: 0.25rem;
+      background-color: var(--green);
+      //box-shadow: rgba(96, 211, 148, 0.4) 0px 0px 50px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+      min-width: 150px;
+      z-index: 1000;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 15px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f5f5f5;
+    }
+
+    .user-name {
+      color: var(--black-1);
+    }
   }
 }

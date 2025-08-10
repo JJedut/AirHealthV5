@@ -40,7 +40,6 @@
 
   .time-range {
     background-color: var(--green);
-    box-shadow: rgba(96, 211, 148, 1) 0px 50px 150px;
     width: 100%;
     border-radius: 0.5rem 0.5rem 0 0;
     padding: 0.25rem;
@@ -141,5 +140,56 @@
 
   span {
     margin: 0 0.5rem;
+  }
+}
+
+.btns {
+  display: flex;
+  gap: 0.25rem;
+}
+
+@media (max-width: 1268px) {
+  .btns {
+    width: 100%;
+
+    ::ng-deep app-button {
+      width: 100% !important;
+      button {
+        width: 100% !important;
+      }
+    }
+  }
+  .time-range {
+    background-color: var(--green);
+    width: 100%;
+    border-radius: 0.5rem 0.5rem 0 0;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    input {
+      flex: 1;
+      border: solid 2px var(--black-1);
+      font-size: 12pt;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      background-color: transparent;
+      color: var(--black);
+      font-family: "Space Mono", monospace;
+      font-weight: 400;
+    }
+
+    button {
+      flex-shrink: 0;
+      border-radius: 0.25rem;
+      background-color: var(--black-1);
+      color: var(--text-color-white);
+      border: solid 2px var(--black-1);
+      font-size: 12pt;
+      padding: 0.5rem 1rem;
+      font-family: "Space Mono", monospace;
+      font-weight: 700;
+    }
   }
 }

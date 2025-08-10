@@ -52,6 +52,14 @@
   padding: 0.5rem 0.5rem 0.5rem 1rem;
 }
 
+.create-table {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+}
+
 .warn {
   background: var(--yellow);
   width: 1.5rem;

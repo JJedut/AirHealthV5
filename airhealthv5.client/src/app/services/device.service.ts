@@ -4,7 +4,7 @@ import {environment} from "../../enviroments/enviroments";
 import {BehaviorSubject, Observable, tap} from "rxjs";
 import {DeviceModel} from "../models/DeviceModel";
 import {AuthService} from "./auth.service";
-import {Thresholds} from "../models/Thresholds";
+import {ThresholdsModel} from "../models/Thresholds";
 
 @Injectable({
   providedIn: 'root'
@@ -91,7 +91,7 @@ export class DeviceService {
     return this.http.get<number[]>(`${this.apiUrl}/GetSensorOrderByUserId/${userId}`);
   }
 
-  setThresholds(deviceId: string, thresholds: Thresholds): Observable<boolean> {
+  setThresholds(deviceId: string, thresholds: ThresholdsModel): Observable<boolean> {
     const payload = {
       deviceId,
       ...thresholds,
@@ -99,7 +99,7 @@ export class DeviceService {
     return this.http.post<boolean>(`${this.apiUrl}/Thresholds`, payload)
   }
 
-  getThresholdByDeviceId(deviceId: string): Observable<Thresholds> {
-    return this.http.get<Thresholds>(`${this.apiUrl}/GetThresholdsByDeviceId/${deviceId}`);
+  getThresholdByDeviceId(deviceId: string): Observable<ThresholdsModel> {
+    return this.http.get<ThresholdsModel>(`${this.apiUrl}/GetThresholdsByDeviceId/${deviceId}`);
   }
 }

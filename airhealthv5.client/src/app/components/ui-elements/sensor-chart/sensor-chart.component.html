@@ -1,73 +1,35 @@
 <div class="sensor-chart">
   <div class="time-range">
-    <input type="datetime-local" [(ngModel)]="fromDate"/>
-    <input type="datetime-local" [(ngModel)]="toDate"/>
-    <app-button [style]="'filled'" (click)="loadDataForDevice()">Fetch</app-button>
-    <app-button [style]="'filled'" (click)="tableGraphToggle()">{{ isTableView ? 'Graph' : 'Table' }}</app-button>
+    <input type="datetime-local" [(ngModel)]="fromDateInput"/>
+    <input type="datetime-local" [(ngModel)]="toDateInput"/>
+    <div class="btns">
+      <app-button [style]="'filled'" (click)="loadDataForDevice()">
+        Fetch
+      </app-button>
+      <app-button [style]="'filled'" (click)="tableGraphToggle()">
+        {{ isTableView ? 'Graph' : 'Table' }}
+      </app-button>
+    </div>
   </div>
-  <div *ngIf="temperatureReadings.length > 0 || sensorReadings.length > 0">
-
+  <div>
     <!--CHART-->
     <div *ngIf="!isTableView">
-      <div *ngFor="let data of allChartData; trackBy: trackById">
-        <app-chart [data]="data" [axisXLabels]="axisYLabels" [fromDateNum]="fromDateNum"></app-chart>
+      <div *ngFor="let data of sensorsChartData; trackBy: trackById">
+        <app-chart
+          [data]="data"
+          [axisXLabels]="data.xLabels"
+          [fromDateNum]="fromDateNum">
+        </app-chart>
       </div>
     </div>
 
     <!--TABLE-->
-    <div *ngIf="isTableView" class="sensor-table">
-      <table>
-        <thead>
-        <tr>
-          <th class="w-10">Nr</th>
-          <ng-container *ngFor="let column of displayedColumns">
-            <th>{{ column.label }}</th>
-          </ng-container>
-          <th class="w-10 ws-nowrap">Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let data of deviceReadings; let i = index">
-          <td>{{ (i + 1) + (currentPage - 1) * pageSize }}</td>
-          <ng-container *ngFor="let column of displayedColumns">
-            <td>{{ data[column.key] }}</td>
-          </ng-container>
-          <td class="ws-nowrap">{{ data.timestamp | date: 'dd.MM.yyyy HH:mm' }}</td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div *ngIf="!isLoading && deviceReadings.length === 0" class="no-data">
-        No data available.
-      </div>
-
-      <!-- Pagination Controls -->
-      <div class="pagination-controls" *ngIf="totalPages > 1">
-        <app-button
-          [style]="'outline-accent'"
-          [size]="'small'"
-          (click)="onPageChange(1)"
-          [disabled]="currentPage === 1"><<</app-button>
-        <app-button
-          [style]="'outline-accent'"
-          [size]="'small'"
-          (click)="onPageChange(currentPage - 1)"
-          [disabled]="currentPage === 1"><</app-button>
-        <span>{{ currentPage }}-{{ totalPages }}</span>
-        <app-button
-          [style]="'outline-accent'"
-          [size]="'small'"
-          (click)="onPageChange(currentPage + 1)"
-          [disabled]="deviceReadings.length < pageSize">></app-button>
-        <app-button
-          [style]="'outline-accent'"
-          [size]="'small'"
-          (click)="onPageChange(totalPages)"
-          [disabled]="deviceReadings.length < pageSize">>></app-button>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="deviceReadings.length == 0" class="no-data">
-    <h1>{{ 'noDataFound' }}</h1>
+    <ng-container
+      *ngIf="isTableView">
+      <app-table
+        [deviceId]="deviceId"
+        [timeRange]="timeRange">
+      </app-table>
+    </ng-container>
   </div>
 </div>
